@@ -43,9 +43,9 @@ Conventional Commits 타입:
 ```bash
 git add [그룹 파일들]
 git commit -m "$(cat <<'EOF'
-type(scope): 제목
+type(scope): 간결한 제목
 
-상세 설명
+상세 설명:
 - 변경사항 1
 - 변경사항 2
 
@@ -115,10 +115,10 @@ git commit -m "updates"  # ❌ 명확하지 않음
 /smart-commit
 
 # 자동으로 4개 커밋 생성:
-# 1. docs: update CLAUDE.md with AI integration guide
-# 2. feat(commands): add Phase development workflows
-# 3. feat(commands): add utility commands (debug, help, setup)
-# 4. docs: add evaluation criteria documentation
+# 1. docs: CLAUDE.md에 AI 통합 가이드 추가
+# 2. feat(commands): Phase 개발 워크플로우 추가
+# 3. feat(commands): 유틸리티 명령어 추가 (debug, help, setup)
+# 4. docs: 평가 기준 문서 추가
 ```
 
 ## 커밋 전 체크리스트
