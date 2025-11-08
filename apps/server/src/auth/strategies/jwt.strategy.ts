@@ -12,12 +12,17 @@ interface JwtPayload {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private prisma: PrismaService) {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error(
+        'JWT_SECRET is not defined. Please set JWT_SECRET environment variable.',
+      );
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey:
-        process.env.JWT_SECRET ||
-        'dev-jwt-secret-key-change-this-in-production-min-32-characters',
+      secretOrKey: secret,
     });
   }
 

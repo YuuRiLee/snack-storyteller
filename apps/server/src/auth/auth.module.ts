@@ -9,9 +9,15 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret:
-        process.env.JWT_SECRET ||
-        'dev-jwt-secret-key-change-this-in-production-min-32-characters',
+      secret: (() => {
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+          throw new Error(
+            'JWT_SECRET is not defined. Please set JWT_SECRET environment variable.',
+          );
+        }
+        return secret;
+      })(),
       signOptions: { expiresIn: '24h' },
     }),
   ],
