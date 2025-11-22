@@ -18,6 +18,17 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      parserOptions: {
+        project: ['./tsconfig.json', './tsconfig.app.json', './tsconfig.node.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  // Allow exporting variants alongside components in UI library files
+  {
+    files: ['**/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
 ]);
