@@ -646,20 +646,40 @@ Priority: P1 (중요)
 ### Implementation Notes
 
 ```typescript
+// apps/server/src/common/decorators/file-upload.decorator.ts (신규 생성)
+
+import { applyDecorators, BadRequestException, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+
+/**
+ * 이미지 업로드 데코레이터 (재사용 가능)
+ * - 5MB 파일 크기 제한
+ * - JPEG, PNG만 허용
+ */
+export function FileUploadInterceptor() {
+  return applyDecorators(
+    UseInterceptors(
+      FileInterceptor('image', {
+        limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+        fileFilter: (req, file, cb) => {
+          const allowedTypes = ['image/jpeg', 'image/png'];
+          if (!allowedTypes.includes(file.mimetype)) {
+            return cb(new BadRequestException('Only JPG/PNG allowed'), false);
+          }
+          cb(null, true);
+        },
+      }),
+    ),
+  );
+}
+
 // apps/server/src/writer/writer.controller.ts (수정)
+
+import { FileUploadInterceptor } from '../common/decorators/file-upload.decorator';
 
 @Post()
 @UseGuards(JwtAuthGuard)
-@UseInterceptors(FileInterceptor('image', {
-  limits: { fileSize: 5 * 1024 * 1024 },  // 5MB
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png'];
-    if (!allowedTypes.includes(file.mimetype)) {
-      return cb(new BadRequestException('Only JPG/PNG allowed'), false);
-    }
-    cb(null, true);
-  },
-}))
+@FileUploadInterceptor()  // ✅ 재사용 가능한 데코레이터
 async create(
   @Body() dto: CreateWriterDto,
   @UploadedFile() image: Express.Multer.File,
@@ -670,16 +690,7 @@ async create(
 
 @Patch(':id')
 @UseGuards(JwtAuthGuard)
-@UseInterceptors(FileInterceptor('image', {
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png'];
-    if (!allowedTypes.includes(file.mimetype)) {
-      return cb(new BadRequestException('Only JPG/PNG allowed'), false);
-    }
-    cb(null, true);
-  },
-}))
+@FileUploadInterceptor()  // ✅ 중복 제거
 async update(
   @Param('id') id: string,
   @Body() dto: UpdateWriterDto,
