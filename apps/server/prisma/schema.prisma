@@ -32,7 +32,8 @@ model Writer {
   description  String   @db.Text
   systemPrompt String   @db.Text
   imageUrl     String?
-  isPublic     Boolean  @default(false)
+  genre        String[]
+  isPublic     Boolean  @default(true)
   userId       String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -42,6 +43,7 @@ model Writer {
 
   @@index([userId])
   @@index([isPublic, createdAt])
+  @@index([name])
 }
 
 // Story model - Phase 4

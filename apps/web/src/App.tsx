@@ -1,28 +1,88 @@
-function App() {
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Navbar } from './components/layout';
+import {
+  LoginPage,
+  RegisterPage,
+  WritersPage,
+  CreateWriterPage,
+  EditWriterPage,
+  WriterDetailPage,
+  MyWritersPage,
+} from './pages';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
+
+function HomePage() {
   return (
-    <div className="min-h-screen flex items-center justify-center dark">
-      <div className="text-center space-y-6">
-        <h1 className="text-4xl font-bold text-primary">Snack Storyteller</h1>
-        <p className="text-muted-foreground text-lg">AI-Powered Short Story Generation Platform</p>
-        <div className="flex gap-4 justify-center mt-8">
-          <div className="px-4 py-2 bg-primary/10 rounded-lg">
-            <p className="text-sm text-muted-foreground">Frontend</p>
-            <p className="font-semibold">React + Vite ✅</p>
+    <div className="container mx-auto px-4 py-16">
+      <div className="text-center space-y-6 max-w-2xl mx-auto">
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground">Snack Storyteller</h1>
+        <p className="text-xl text-muted-foreground">AI-Powered Short Story Generation Platform</p>
+        <p className="text-muted-foreground">
+          Create unique AI writer personas and generate engaging short stories in your preferred
+          style and genre.
+        </p>
+
+        <div className="flex gap-4 justify-center mt-8 flex-wrap">
+          <div className="px-6 py-4 bg-primary/10 rounded-lg">
+            <p className="text-sm text-muted-foreground">Writers</p>
+            <p className="text-2xl font-bold text-primary">AI Personas</p>
           </div>
-          <div className="px-4 py-2 bg-primary/10 rounded-lg">
-            <p className="text-sm text-muted-foreground">Backend</p>
-            <p className="font-semibold">NestJS ✅</p>
+          <div className="px-6 py-4 bg-primary/10 rounded-lg">
+            <p className="text-sm text-muted-foreground">Stories</p>
+            <p className="text-2xl font-bold text-primary">1,500+ Words</p>
           </div>
-          <div className="px-4 py-2 bg-primary/10 rounded-lg">
-            <p className="text-sm text-muted-foreground">Database</p>
-            <p className="font-semibold">PostgreSQL ✅</p>
+          <div className="px-6 py-4 bg-primary/10 rounded-lg">
+            <p className="text-sm text-muted-foreground">Generation</p>
+            <p className="text-2xl font-bold text-primary">30 Seconds</p>
           </div>
         </div>
+
         <p className="text-sm text-muted-foreground mt-8">
-          Phase 1: Project Initialization Complete 🎉
+          Phase 3: Writer Management System Complete
         </p>
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <div className="min-h-screen bg-background dark">
+          <Navbar />
+          <main>
+            <Routes>
+              {/* Home */}
+              <Route path="/" element={<HomePage />} />
+
+              {/* Auth */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+
+              {/* Writers */}
+              <Route path="/writers" element={<WritersPage />} />
+              <Route path="/writers/create" element={<CreateWriterPage />} />
+              <Route path="/writers/:id" element={<WriterDetailPage />} />
+              <Route path="/writers/:id/edit" element={<EditWriterPage />} />
+              <Route path="/my-writers" element={<MyWritersPage />} />
+
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+        </div>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
