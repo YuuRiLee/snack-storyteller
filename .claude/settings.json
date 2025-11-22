@@ -1,0 +1,64 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$TOOL_ARGS\" == *\"spec.md\"* ]] || [[ \"$TOOL_ARGS\" == *\"plan.md\"* ]] || [[ \"$TOOL_ARGS\" == *\"tasks.md\"* ]]; then echo '📄 SDD 문서 업데이트됨. Context7/Sequential로 검증을 권장합니다.'; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$TOOL_ARGS\" == *\"spec.md\"* ]] || [[ \"$TOOL_ARGS\" == *\"plan.md\"* ]] || [[ \"$TOOL_ARGS\" == *\"tasks.md\"* ]]; then echo '📝 SDD 문서 수정됨. 관련 문서도 업데이트가 필요할 수 있습니다.'; fi"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:zeta-ai.io)",
+      "mcp__context7__resolve-library-id",
+      "WebSearch",
+      "mcp__sequential-thinking__sequentialthinking",
+      "Bash(git commit -m \"$(cat <<''EOF''\ndocs: add comprehensive project guidelines and documentation\n\n- Add CLAUDE.md with complete development guidelines\n  - AI developer execution mode and best practices\n  - SuperClaude MCP integration strategies\n  - Phase-based development workflow (MVP 5 stages)\n  - Technology stack and architecture details\n  - Code quality standards and verification protocols\n  \n- Update README.md with project overview\n  - AI-powered short story generation platform\n  - Tech stack: React, NestJS, Prisma, PostgreSQL\n  - Portfolio project for AI developer transition\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: add Phase-based development command workflows\n\nAdd comprehensive Phase commands for MVP development:\n- /phase1-init: Project initialization and infrastructure setup\n- /phase2-auth: Authentication system with JWT and Prisma\n- /phase3-writers: Writer persona management with systemPrompt\n- /phase4-story-gen: AI story generation with OpenAI GPT-4\n- /phase5-library: Story library with search and bookmarks\n\nEach command includes:\n- Context7 integration for official documentation\n- Sequential Thinking for design decisions\n- Step-by-step implementation guidance\n- Verification checkpoints and success criteria\n- AI tool usage strategies\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit:*)",
+      "Bash(git log:*)",
+      "Bash(gh pr create --base feat/commands --title \"Git 워크플로우 자동화 도구 추가\" --body \"$(cat <<''EOF''\n## 📋 개요\nGit 작업을 자동화하는 2개의 Commands를 추가하여 개발 생산성을 향상시킵니다.\n\n## ✨ 주요 변경사항\n\n### 1. /smart-commit - 스마트 커밋 생성기 (177줄)\n**기능**:\n- 변경된 파일을 논리적 그룹으로 자동 분류\n- 그룹별로 Conventional Commits 형식의 커밋 생성\n- 한국어로 자연스러운 커밋 메시지 작성\n\n**그룹화 기준**:\n- 문서: `*.md`, `docs/`\n- 설정: `*.config.js`, `*.json`\n- 백엔드: `apps/server/`\n- 프론트엔드: `apps/web/`\n- Commands: `.claude/commands/`\n\n**커밋 타입**: feat, fix, docs, style, refactor, test, chore, perf\n\n### 2. /create-pr - PR 자동 생성기 (316줄)\n**기능**:\n- 현재 브랜치의 커밋 분석\n- PR 제목 자동 생성\n- 구조화된 PR 설명 생성\n- GitHub CLI 통합\n\n**생성 템플릿**:\n- 표준 템플릿: 일반 기능/버그 수정\n- Phase 개발용 템플릿: Phase Commands용 특화\n\n**자동 분석**:\n- 코드 변경 통계\n- 영향 범위 파악\n- 의존성 변경 감지\n\n## 🎯 목적\n\n1. **커밋 품질 향상**: Conventional Commits 표준 준수, 일관된 메시지\n2. **시간 절약**: 수동 커밋/PR 작성 시간 단축\n3. **논리적 구조화**: 변경사항을 체계적으로 정리\n4. **한국어 자연스러움**: 개발 용어는 영어, 설명은 자연스러운 한국어\n\n## 🤖 AI 도구 활용\n\n### Sequential Thinking\n- 복잡한 변경사항 그룹화 전략 수립\n- PR 구조화 및 논리적 설명 생성\n\n### Context7 (간접 활용)\n- Git best practices 참고\n- Conventional Commits 표준 확인\n\n## 🔍 테스트 방법\n\n```bash\n# 파일 수정 후\n/smart-commit\n\n# PR 생성 전\n/create-pr --base main\n```\n\n## 📝 체크리스트\n\n- [x] smart-commit.md 작성 완료 (177줄)\n- [x] create-pr.md 작성 완료 (316줄)\n- [x] 한국어 자연스러움 검증\n- [x] 개발 용어 영어 유지 (type, scope)\n- [x] 예시 코드 포함\n- [x] MCP 도구 활용 전략 명시\n\n## 📊 통계\n\n- **2 files changed**\n- **493 insertions(+)**\n- smart-commit.md: 177줄\n- create-pr.md: 316줄\n\n## 🚀 다음 단계\n\n1. `feat/commands` 브랜치에 머지\n2. 실제 개발 시 `/smart-commit` 활용\n3. 각 Phase 완료 후 `/create-pr` 사용\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\nEOF\n)\")",
+      "Bash(brew install:*)",
+      "Bash(gh:*)",
+      "Bash(git fetch:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:yozm.wishket.com)",
+      "WebFetch(domain:github.blog)",
+      "WebFetch(domain:developers.redhat.com)",
+      "Bash(tree:*)",
+      "mcp__context7__get-library-docs",
+      "Bash(pnpm prisma migrate dev:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker compose:*)",
+      "Bash(npx tsc:*)",
+      "Bash(pnpm type-check:*)",
+      "Bash(pnpm install)",
+      "Bash(npx prisma generate:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm build:*)",
+      "Bash(curl:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "WebFetch(domain:code.claude.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
