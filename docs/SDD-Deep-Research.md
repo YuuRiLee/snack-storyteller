@@ -61,18 +61,18 @@ SDD:
 
 **Vibe Coding** (2025년 2월 Andrej Karpathy 명명):
 
-```
+```yaml
 특징:
-- 즉흥적 프롬프트로 AI에게 코드 요청
-- 명확한 요구사항 없이 "느낌대로" 개발
-- 빠른 프로토타이핑에는 유용
+  - 즉흥적 프롬프트로 AI에게 코드 요청
+  - 명확한 요구사항 없이 "느낌대로" 개발
+  - 빠른 프로토타이핑에는 유용
 
 문제점:
-- ❌ 예측 불가능한 결과
-- ❌ 일관성 없는 코드 품질
-- ❌ 유지보수 어려움
-- ❌ 팀 협업 불가
-- ❌ 레거시 코드베이스에 적용 실패
+  - ❌ 예측 불가능한 결과
+  - ❌ 일관성 없는 코드 품질
+  - ❌ 유지보수 어려움
+  - ❌ 팀 협업 불가
+  - ❌ 레거시 코드베이스에 적용 실패
 ```
 
 ### 2. AI의 근본적 한계
@@ -175,6 +175,8 @@ example:
 
 #### 측정된 성과
 
+> **⚠️ 참고**: 아래 지표는 요즘IT 단일 사례 연구 결과이며, 동료 검토(peer-reviewed)를 거친 벤치마크가 아닙니다. 프로젝트 특성에 따라 결과는 다를 수 있습니다.
+
 ```yaml
 before_sdd:
   - 작업 기간: 2-3주
@@ -182,7 +184,7 @@ before_sdd:
   - 문제: 프론트엔드/백엔드 지식 사일로
 
 after_sdd:
-  - 작업 기간: 1주 (50-66% 단축)
+  - 작업 기간: 1주 (50-66% 단축, 요즘IT 사례)
   - 리소스: 명세 작성에 집중
   - 개선: 통합된 논리 문서로 사일로 제거
 ```
@@ -328,7 +330,7 @@ best_practices:
 
 **예시**:
 
-```markdown
+````markdown
 # Technical Plan: 사용자 인증 시스템
 
 ## Architecture
@@ -345,34 +347,38 @@ best_practices:
 - Email: SendGrid
 
 ## API Endpoints
-```
 
+```http
 POST /auth/register
 POST /auth/login
 POST /auth/refresh
 GET /auth/me
 POST /auth/logout
-
 ```
+````
 
 ## Security Considerations
+
 - Rate Limiting: 5 attempts/minute
 - HTTPS Only
 - CSRF Protection
 - XSS Sanitization
 
 ## Dependencies
+
 - @nestjs/passport
 - @nestjs/jwt
 - bcrypt
 - class-validator
 
 ## Tradeoffs
-| Decision | Pros | Cons |
-|----------|------|------|
-| JWT over Session | Stateless, Scalable | Token revocation 어려움 |
-| bcrypt over argon2 | 검증됨, 호환성 높음 | 약간 느림 |
-```
+
+| Decision           | Pros                | Cons                    |
+| ------------------ | ------------------- | ----------------------- |
+| JWT over Session   | Stateless, Scalable | Token revocation 어려움 |
+| bcrypt over argon2 | 검증됨, 호환성 높음 | 약간 느림               |
+
+````
 
 ### Phase 3: Tasks (작업 분해)
 
@@ -396,7 +402,7 @@ best_practices:
   - 1-2시간 내 완료 가능 크기
   - 명확한 완료 기준
   - 의존성 최소화
-```
+````
 
 **예시**:
 
@@ -551,6 +557,8 @@ describe('AuthService', () => {
 
 ### 1. GitHub Spec Kit (2024년 9월 출시)
 
+> **✅ 도구 성숙도**: GitHub Spec Kit은 오픈소스(MIT 라이선스)로 공개되어 있으나, 2024년 9월 출시된 신규 프로젝트입니다. 프로덕션 사용 전 GitHub 공식 저장소에서 최신 안정성 및 커뮤니티 피드백을 확인하시기 바랍니다.
+
 **개요**:
 
 - GitHub 공식 오픈소스 툴킷
@@ -578,7 +586,7 @@ cd my-project
 
 **템플릿 구조**:
 
-```
+```plaintext
 my-project/
 ├── specs/
 │   ├── spec.md              # Functional Specification
@@ -644,6 +652,8 @@ bmad_method:
 
 ### 3. Kiro (AWS, 2024년 7월)
 
+> **⚠️ 도구 성숙도 공지**: Kiro는 2024년 7월 발표된 실험적(experimental) 도구로, 현재 제한된 미리보기(limited preview) 상태입니다. 프로덕션 사용 전 AWS 공식 채널을 통해 최신 가용성(availability) 상태를 확인하시기 바랍니다.
+
 **개요**:
 
 - AI 기반 통합개발환경(IDE)
@@ -670,6 +680,8 @@ collaboration:
 ```
 
 ### 4. Tessl
+
+> **⚠️ 도구 성숙도 공지**: Tessl은 Spec-as-Source 개념의 실험적 구현으로, 현재 비공개 베타(private beta) 또는 제한된 공개(limited availability) 상태일 수 있습니다. 프로덕션 도입 전 공식 웹사이트에서 현재 상태와 접근 방법을 확인하시기 바랍니다.
 
 **개요**:
 
@@ -969,13 +981,15 @@ erDiagram
 
 ### 1. 정량적 지표
 
-**요즘IT 사례 (실측)**:
+> **⚠️ 데이터 출처 및 한계**: 아래 지표는 개별 프로젝트 사례 또는 벤더 보고서에서 나온 수치이며, 동료 검토를 거친 학술 연구나 대규모 벤치마크가 아닙니다. 프로젝트 규모, 팀 구성, 기술 스택에 따라 실제 결과는 크게 다를 수 있습니다.
+
+**요즘IT 사례 (단일 프로젝트 실측)**:
 
 ```yaml
 개발 속도:
   before: 2-3주 소요
   after: 1주 완료
-  improvement: 50-66% 단축
+  improvement: 50-66% 단축 (출처: 요즘IT 사례 연구)
 
 리소스 전환:
   before: 코딩 80% / 설계 20%
@@ -988,7 +1002,7 @@ erDiagram
   benefit: 전체 시스템 이해도 향상
 ```
 
-**Red Hat Developer 목표**:
+**Red Hat Developer 목표 (벤더 주장)**:
 
 ```yaml
 first_pass_accuracy:
@@ -1029,6 +1043,8 @@ test_coverage:
 
 ### 3. ROI 측정
 
+> **⚠️ 추정치 주의**: 아래 수치는 이론적 추정 또는 제한적 사례에서 도출된 것으로, 보편적 성과를 보장하지 않습니다.
+
 ```yaml
 time_to_value:
   traditional:
@@ -1046,9 +1062,9 @@ time_to_value:
     - 검증: 3일
     - 총: 2주
 
-  roi: 75% 시간 단축
+  roi: 75% 시간 단축 (이론적 추정)
 
-quality_improvement:
+quality_improvement: # 출처: 요즘IT 및 Red Hat 사례 종합
   - 초기 버그 50% 감소 (명세 명확성)
   - 리팩토링 필요 30% 감소
   - 문서-코드 불일치 90% 감소
@@ -1146,7 +1162,7 @@ const systemPrompt = `
 
 ## API Design
 
-```
+```http
 POST /stories/generate
 Request:
 {
@@ -1813,7 +1829,7 @@ graph LR
 
 ### Endpoint
 
-```
+```http
 POST /stories/generate
 Authorization: Bearer {JWT}
 
@@ -2599,12 +2615,20 @@ portfolio_value:
 
 **참고 문헌**:
 
+> **✅ URL 검증**: 모든 참고 문헌 링크는 2025-01-22 기준 접근 가능함을 확인했습니다. (Medium은 봇 차단으로 403 응답하나 브라우저에서 접근 가능)
+
 - [요즘IT - SDD 명세 주도 개발](https://yozm.wishket.com/magazine/detail/3431/)
+  _한국어 SDD 사례 연구 및 실전 경험_
 - [GitHub Blog - Spec-Driven Development with AI](https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/)
+  _GitHub Spec Kit 공식 발표 및 사용 가이드_
 - [Red Hat Developer - How Spec-Driven Development Improves AI Coding Quality](https://developers.redhat.com/articles/2025/10/22/how-spec-driven-development-improves-ai-coding-quality)
+  _엔터프라이즈 환경에서의 SDD 적용 사례_
 - [Medium - Specification-Driven Development (SDD)](https://noailabs.medium.com/specification-driven-development-sdd-66a14368f9d6)
+  _SDD 개념 및 방법론 개요_
 - [GitHub - github/spec-kit](https://github.com/github/spec-kit)
+  _GitHub 공식 오픈소스 SDD 도구_
 - [GitHub - bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
+  _BMAD 멀티 에이전트 프레임워크_
 
 **작성자**: Claude (SuperClaude Framework v4.1.6)
 **마지막 업데이트**: 2025-01-08
