@@ -7,12 +7,14 @@
 **목표**: AI 개발자 전향용 포트폴리오 - AI 단편 소설 생성 플랫폼
 
 **핵심 가치 제안**:
+
 - 🤖 **AI 통합 숙련도**: OpenAI GPT-4 API 활용 및 Prompt Engineering
 - 🎨 **스타일 커스터마이제이션**: 작가 페르소나 + 장르/분위기/결말 조합
 - ⚡ **빠른 생성**: 1,500-2,000 단어 완성작을 30초 내 생성
 - 📚 **라이브러리 관리**: 생성된 소설 저장, 검색, 북마크 시스템
 
 **포트폴리오 강점**:
+
 - ✅ 완성도 높은 풀스택 프로젝트 (1-2주 완성 가능)
 - ✅ 최신 AI 기술 실전 활용 (OpenAI API, Prompt Engineering)
 - ✅ 현대적 기술 스택 (React, NestJS, Prisma, PostgreSQL)
@@ -58,7 +60,7 @@ export class AuthService {
 
     return {
       access_token: this.jwtService.sign({ sub: user.id, email: user.email }),
-      user: { id: user.id, email: user.email, name: user.name }
+      user: { id: user.id, email: user.email, name: user.name },
     };
   }
 }
@@ -68,12 +70,12 @@ export class AuthService {
 
 ```yaml
 situation_to_mcp_mapping:
-  "React hooks 사용법?": /context7 react hooks
-  "NestJS guards 구현?": /context7 nestjs guards
-  "Prisma migration 에러?": /context7 prisma migrations
-  "OpenAI streaming?": /context7 openai streaming api
-  "pgvector 설정?": /context7 pgvector postgres
-  "shadcn 컴포넌트?": /magic (UI는 무조건 Magic MCP)
+  'React hooks 사용법?': /context7 react hooks
+  'NestJS guards 구현?': /context7 nestjs guards
+  'Prisma migration 에러?': /context7 prisma migrations
+  'OpenAI streaming?': /context7 openai streaming api
+  'pgvector 설정?': /context7 pgvector postgres
+  'shadcn 컴포넌트?': /magic (UI는 무조건 Magic MCP)
 ```
 
 **절대 원칙**: 추측하지 말고, Context7로 공식 문서를 확인하라.
@@ -81,6 +83,7 @@ situation_to_mcp_mapping:
 #### 3. 복잡한 설계는 Sequential Thinking 사용
 
 다음 상황에서는 반드시 Sequential Thinking MCP를 활용:
+
 - pgvector 설정 방법 결정
 - AI context building 알고리즘 설계
 - 아키텍처 트레이드오프 분석
@@ -107,6 +110,7 @@ curl -X POST http://localhost:3001/auth/login \
 각 Phase 명령(`/phase1-init`, `/phase4-chat` 등) 실행 시:
 
 #### 🟢 Phase 시작 전 (Pre-flight)
+
 ```yaml
 - [ ] 이 Phase의 명확한 성공 기준을 이해했는가?
 - [ ] 필요한 dependencies가 무엇인지 파악했는가?
@@ -116,6 +120,7 @@ curl -X POST http://localhost:3001/auth/login \
 ```
 
 #### 🟡 Phase 진행 중 (In-flight)
+
 ```yaml
 - [ ] 각 파일 작성 전 기존 프로젝트 패턴 확인
 - [ ] 코드 작성 후 즉시 컴파일/타입체크 실행
@@ -125,6 +130,7 @@ curl -X POST http://localhost:3001/auth/login \
 ```
 
 #### 🔴 Phase 완료 시 (Post-flight)
+
 ```yaml
 - [ ] Success criteria 각 항목 검증 완료
 - [ ] pnpm build가 성공하는가?
@@ -162,6 +168,7 @@ curl -X POST http://localhost:3001/auth/login \
 ### 실패 대응 프로토콜
 
 #### 컴파일 에러 발생 시
+
 ```yaml
 1. 에러 메시지 정확히 읽기
 2. /context7 [관련 라이브러리] 로 공식 해결책 검색
@@ -171,6 +178,7 @@ curl -X POST http://localhost:3001/auth/login \
 ```
 
 #### 기능이 너무 복잡할 때
+
 ```yaml
 1. TodoWrite로 세부 작업 분해
 2. 가장 간단한 버전부터 구현 (MVP)
@@ -180,6 +188,7 @@ curl -X POST http://localhost:3001/auth/login \
 ```
 
 #### 구현 방법을 모를 때
+
 ```yaml
 1. 절대 추측하지 말 것
 2. /context7 [기술명] 으로 공식 문서 확인
@@ -191,6 +200,7 @@ curl -X POST http://localhost:3001/auth/login \
 ### 성공 기준의 재정의
 
 **"완료"의 의미**:
+
 - ✅ 코드가 컴파일된다 (최소 조건)
 - ✅ 타입 에러가 없다
 - ✅ **실제로 작동한다** (필수)
@@ -202,6 +212,7 @@ curl -X POST http://localhost:3001/auth/login \
 ### 코드 품질 자동 검증
 
 매 커밋 전 실행할 검증 스크립트:
+
 ```bash
 #!/bin/bash
 # scripts/verify-quality.sh
@@ -230,6 +241,7 @@ echo "✅ All quality checks passed!"
 ### Phase별 핵심 검증 포인트
 
 #### Phase 1 (Init)
+
 ```bash
 ✅ pnpm install 성공
 ✅ apps/web 컴파일 성공
@@ -239,6 +251,7 @@ echo "✅ All quality checks passed!"
 ```
 
 #### Phase 2 (Auth)
+
 ```bash
 ✅ Prisma migration 성공
 ✅ User 생성 API 작동
@@ -248,6 +261,7 @@ echo "✅ All quality checks passed!"
 ```
 
 #### Phase 4 (Chat + AI)
+
 ```bash
 ✅ OpenAI API 연결 성공
 ✅ SSE 스트리밍 엔드포인트 작동
@@ -257,6 +271,7 @@ echo "✅ All quality checks passed!"
 ```
 
 #### Phase 5 (Memory)
+
 ```bash
 ✅ pgvector extension 설치 완료
 ✅ Vector column migration 성공
@@ -267,9 +282,157 @@ echo "✅ All quality checks passed!"
 
 ---
 
+## 📐 Spec-Driven Development (SDD) 실행 규칙
+
+> **핵심**: Specification이 Source of Truth다. 코드보다 명세가 먼저다.
+
+### Phase Commands 실행 시 필수 절차
+
+**모든 Phase Commands (`/phase1-init`, `/phase2-auth`, `/phase3-writers`, 등) 실행 시 다음을 반드시 따른다:**
+
+#### STEP 0: SDD 문서 읽기 (MANDATORY)
+
+```bash
+# 1. Constitution 읽기 (프로젝트 불변 원칙)
+Read specs/constitution.md
+
+# 2. 해당 Phase의 Spec 읽기 (요구사항)
+Read specs/phase{N}-{name}/spec.md
+
+# 3. 해당 Phase의 Plan 읽기 (기술 설계)
+Read specs/phase{N}-{name}/plan.md
+
+# 4. 해당 Phase의 Tasks 읽기 (작업 분해)
+Read specs/phase{N}-{name}/tasks.md
+```
+
+**예시**: `/phase3-writers` 실행 시
+
+```bash
+Read specs/constitution.md           # 프로젝트 원칙
+Read specs/phase3-writers/spec.md    # Phase 3 요구사항
+Read specs/phase3-writers/plan.md    # Phase 3 기술 설계
+Read specs/phase3-writers/tasks.md   # Phase 3 작업 목록
+```
+
+#### 문서별 역할
+
+| 문서              | 역할               | 읽는 이유                                    |
+| ----------------- | ------------------ | -------------------------------------------- |
+| `constitution.md` | 프로젝트 불변 원칙 | 절대 위반하면 안 되는 규칙 확인              |
+| `spec.md`         | 요구사항 명세      | 무엇을 만들어야 하는지 정확히 파악           |
+| `plan.md`         | 기술 설계          | 어떻게 만들 것인지 아키텍처 결정 확인        |
+| `tasks.md`        | 작업 분해          | 구체적으로 무엇을 구현해야 하는지 체크리스트 |
+
+#### 읽은 후 확인사항
+
+SDD 문서를 읽은 후 다음을 명시적으로 확인:
+
+1. **Constitution 위반 여부**: 불변 원칙을 지킬 수 있는가?
+2. **Spec 이해도**: 핵심 요구사항 3가지를 말할 수 있는가?
+3. **Plan 숙지도**: 주요 아키텍처 결정 사항을 이해했는가?
+4. **Tasks 파악**: 총 몇 개의 작업이 있고, 우선순위는?
+
+### SDD 문서가 없을 때
+
+만약 해당 Phase의 SDD 문서(spec/plan/tasks)가 아직 없다면:
+
+1. **절대 추측하지 말 것** - 임의로 구현하지 않음
+2. **SDD 문서 먼저 작성** - `.claude/docs/methodology/SDD-Deep-Research.md` 참고
+3. **사용자 확인 받기** - spec.md 초안을 사용자에게 검토 요청
+4. **승인 후 구현 시작** - 승인된 명세를 기반으로만 코드 작성
+
+### SDD → 구현 워크플로우
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Phase Command 실행 (/phase3-writers)                    │
+└─────────────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────────┐
+│ STEP 0: SDD 문서 읽기                                   │
+│ • constitution.md (프로젝트 원칙)                       │
+│ • spec.md (요구사항)                                    │
+│ • plan.md (기술 설계)                                   │
+│ • tasks.md (작업 목록)                                  │
+└─────────────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────────┐
+│ STEP 1: Context7 공식 문서 학습                         │
+│ • NestJS CRUD patterns                                  │
+│ • Prisma relations                                      │
+│ • File upload validation                                │
+└─────────────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────────┐
+│ STEP 2: Sequential Thinking 설계                        │
+│ • SystemPrompt 구조 설계                                │
+│ • 아키텍처 트레이드오프 분석                            │
+└─────────────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────────┐
+│ STEP 3: TodoWrite 작업 추적                             │
+│ • tasks.md 기반으로 작업 리스트 생성                    │
+└─────────────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────────┐
+│ STEP 4: 순차 구현                                       │
+│ • Backend → Frontend                                    │
+│ • 각 단계마다 type-check, lint, test                   │
+└─────────────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────────────┐
+│ STEP 5: 검증                                            │
+│ • spec.md 성공 기준 확인                                │
+│ • curl 테스트                                           │
+│ • 브라우저 수동 테스트                                  │
+└─────────────────────────────────────────────────────────┘
+```
+
+### SDD 문서 업데이트 규칙
+
+**코드 구현 중 설계 변경 필요 시**:
+
+1. **즉시 멈추기** - 코드 작성 중단
+2. **변경 사유 기록** - 왜 변경이 필요한지 명시
+3. **plan.md 업데이트** - 설계 문서 먼저 수정
+4. **사용자 확인** - 변경사항 승인 요청
+5. **승인 후 재개** - 업데이트된 plan.md 기반으로 구현
+
+**잘못된 예**:
+
+```
+❌ "spec.md에는 X라고 되어 있지만, Y가 더 나을 것 같아서 Y로 구현했습니다"
+```
+
+**올바른 예**:
+
+```
+✅ "spec.md에 X라고 되어 있는데, 다음 이유로 Y가 더 적합합니다:
+    [이유 설명]
+    plan.md를 업데이트하겠습니다. 승인 부탁드립니다."
+```
+
+### SDD Hooks 연동
+
+`.claude/settings.json`의 hooks가 SDD 문서 수정을 감지:
+
+- `spec.md` 수정 시 → Context7/Sequential로 검증 권장
+- `plan.md` 수정 시 → 관련 문서 업데이트 필요성 알림
+- `tasks.md` 수정 시 → TodoWrite 동기화 권장
+
+**SDD 문서를 수정했다면 반드시**:
+
+1. 다른 SDD 문서와 일관성 확인
+2. 이미 작성된 코드와의 정합성 점검
+3. 필요시 코드 리팩토링
+
+---
+
 ## 🏗️ 기술 스택 & 아키텍처
 
 ### Frontend Stack
+
 ```yaml
 framework: React 18 + Vite + TypeScript
 ui_library: shadcn/ui + TailwindCSS
@@ -282,6 +445,7 @@ package_manager: pnpm
 ```
 
 ### Backend Stack
+
 ```yaml
 framework: NestJS + TypeScript
 database: PostgreSQL + Prisma ORM
@@ -292,6 +456,7 @@ api_style: RESTful + SSE (스트리밍)
 ```
 
 ### AI & External Services
+
 ```yaml
 ai_providers:
   - OpenAI GPT-4 (주요)
@@ -304,6 +469,7 @@ storage: AWS S3 (이미지)
 ```
 
 ### Infrastructure
+
 ```yaml
 containerization: Docker + docker-compose
 monorepo: pnpm workspaces
@@ -334,34 +500,42 @@ snack-storyteller/
 ## 🎨 UI/UX 디자인 시스템 (ZETA 기반)
 
 ### 컬러 팔레트
+
 ```css
 /* Primary Colors */
---background: 0 0% 3.9%;          /* 다크 배경 */
---foreground: 0 0% 98%;           /* 화이트 텍스트 */
---primary: 262.1 83.3% 57.8%;     /* 브랜드 퍼플 */
+--background: 0 0% 3.9%; /* 다크 배경 */
+--foreground: 0 0% 98%; /* 화이트 텍스트 */
+--primary: 262.1 83.3% 57.8%; /* 브랜드 퍼플 */
 --primary-foreground: 210 20% 98%;
 
 /* UI Colors */
---muted: 0 0% 14.9%;              /* 회색 배경 */
---muted-foreground: 0 0% 63.9%;   /* 회색 텍스트 */
---accent: 0 0% 14.9%;             /* 액센트 */
---destructive: 0 84.2% 60.2%;     /* 에러/삭제 */
+--muted: 0 0% 14.9%; /* 회색 배경 */
+--muted-foreground: 0 0% 63.9%; /* 회색 텍스트 */
+--accent: 0 0% 14.9%; /* 액센트 */
+--destructive: 0 84.2% 60.2%; /* 에러/삭제 */
 ```
 
 ### 타이포그래피
+
 ```css
-font-family: "Pretendard Variable", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+font-family:
+  'Pretendard Variable',
+  -apple-system,
+  BlinkMacSystemFont,
+  system-ui,
+  sans-serif;
 
 /* Font Sizes */
---text-xs: 0.75rem;     /* 12px */
---text-sm: 0.875rem;    /* 14px */
---text-base: 1rem;      /* 16px */
---text-lg: 1.125rem;    /* 18px */
---text-xl: 1.25rem;     /* 20px */
---text-2xl: 1.5rem;     /* 24px */
+--text-xs: 0.75rem; /* 12px */
+--text-sm: 0.875rem; /* 14px */
+--text-base: 1rem; /* 16px */
+--text-lg: 1.125rem; /* 18px */
+--text-xl: 1.25rem; /* 20px */
+--text-2xl: 1.5rem; /* 24px */
 ```
 
 ### 레이아웃 패턴
+
 - **모바일 우선 설계**: 스마트폰에서 2시간+ 사용 최적화
 - **다크 테마 기본**: 몰입감 있는 어두운 인터페이스
 - **하단 탭 내비게이션**: 홈, 채팅, 생성, 마이페이지
@@ -369,23 +543,25 @@ font-family: "Pretendard Variable", -apple-system, BlinkMacSystemFont, system-ui
 - **카드 기반 레이아웃**: 캐릭터, 스토리, 랭킹 표시
 
 ### 컴포넌트 가이드라인
+
 ```typescript
 // 항상 shadcn/ui 컴포넌트 사용
-import { Button, Card, Input, Dialog } from "@/components/ui"
+import { Button, Card, Input, Dialog } from '@/components/ui';
 
 // 다크 테마 최적화
-className="bg-background text-foreground border-border"
+className = 'bg-background text-foreground border-border';
 
 // 모바일 터치 친화적
-className="min-h-[44px] touch-manipulation"
+className = 'min-h-[44px] touch-manipulation';
 
 // 애니메이션 사용
-className="transition-all duration-200 hover:scale-105"
+className = 'transition-all duration-200 hover:scale-105';
 ```
 
 ## 🤖 AI 프롬프트 엔지니어링 Best Practices
 
 ### 시스템 프롬프트 구조
+
 ```typescript
 const systemPrompt = `
 당신은 ${character.name}입니다.
@@ -412,6 +588,7 @@ ${recentMessages}
 ```
 
 ### 컨텍스트 빌딩 전략
+
 ```typescript
 // 우선순위 기반 컨텍스트 구성
 const context = {
@@ -424,6 +601,7 @@ const context = {
 ```
 
 ### 스트리밍 최적화
+
 ```typescript
 // 토큰 단위로 스트리밍, 문장 단위로 표시
 const streamResponse = async function* (prompt) {
@@ -440,12 +618,14 @@ const streamResponse = async function* (prompt) {
 #### Context7: 공식 문서 기반 구현
 
 **사용 시점**:
+
 - 새로운 라이브러리 사용 전 (필수)
 - 에러 메시지를 해결할 때
 - API 사용법이 불확실할 때
 - 공식 권장 패턴을 따라야 할 때
 
 **실전 예시**:
+
 ```bash
 # Phase 2: Auth 구현 시
 /context7 nestjs jwt authentication
@@ -464,6 +644,7 @@ const streamResponse = async function* (prompt) {
 ```
 
 **출력 활용 방법**:
+
 1. Context7 결과를 읽고 공식 패턴 파악
 2. 프로젝트 구조에 맞게 조정
 3. 코드 작성 시 주석으로 출처 명시
@@ -472,12 +653,14 @@ const streamResponse = async function* (prompt) {
 #### Sequential Thinking: 복잡한 설계 결정
 
 **필수 사용 시점**:
+
 - 여러 구현 방법 중 선택해야 할 때
 - 트레이드오프 분석이 필요할 때
 - 단계별 계획이 필요한 복잡한 기능
 - 디버깅 전략을 수립할 때
 
 **실전 예시**:
+
 ```
 상황 1: pgvector 설정 방법 결정
 → Sequential Thinking으로:
@@ -493,9 +676,10 @@ const streamResponse = async function* (prompt) {
 ```
 
 **사용 패턴**:
+
 ```typescript
 // 코드 작성 전에 먼저 생각
-"Sequential Thinking을 사용하여 [문제]를 분석하고 구현 계획을 수립해줘"
+'Sequential Thinking을 사용하여 [문제]를 분석하고 구현 계획을 수립해줘';
 
 // 결과를 바탕으로 코드 작성
 // 각 단계마다 Sequential Thinking 결과의 단계 번호를 주석으로 명시
@@ -506,6 +690,7 @@ const streamResponse = async function* (prompt) {
 **절대 원칙**: 모든 UI는 Magic으로 생성, 수동 작성 금지
 
 **사용 예시**:
+
 ```bash
 # Phase 2: Auth UI
 "shadcn dialog with email/password login form, dark theme"
@@ -525,6 +710,7 @@ const streamResponse = async function* (prompt) {
 ```
 
 **통합 방법**:
+
 1. Magic으로 컴포넌트 코드 생성
 2. `packages/ui/` 또는 `apps/web/src/components/`에 저장
 3. Tailwind class를 프로젝트 컬러 시스템에 맞게 조정
@@ -533,11 +719,13 @@ const streamResponse = async function* (prompt) {
 #### Playwright: E2E 테스트 자동화
 
 **사용 시점**:
+
 - Phase 완료 시 검증 자동화
 - 주요 사용자 플로우 테스트
 - 회귀 테스트 필요 시
 
 **테스트 시나리오**:
+
 ```typescript
 // Phase 2 검증: 로그인 플로우
 test('complete login flow', async ({ page }) => {
@@ -591,6 +779,7 @@ curl로 API 테스트
 ### MCP 조합 패턴
 
 #### 패턴 1: 학습 → 설계 → 구현
+
 ```
 Context7 (공식 문서)
   → Sequential Thinking (전략 수립)
@@ -599,6 +788,7 @@ Context7 (공식 문서)
 ```
 
 #### 패턴 2: UI 중심 개발
+
 ```
 Magic (컴포넌트 생성)
   → Context7 (React 패턴 확인)
@@ -607,6 +797,7 @@ Magic (컴포넌트 생성)
 ```
 
 #### 패턴 3: 복잡한 기능 개발
+
 ```
 Sequential Thinking (문제 분해)
   → Context7 (각 부분의 공식 방법)
@@ -618,14 +809,14 @@ Sequential Thinking (문제 분해)
 ### 페르소나별 MCP 활용
 
 #### 풀스택 개발자 페르소나 (기본)
+
 ```yaml
 primary_mcp:
   - Context7: 모든 새 기술 사용 전
   - Sequential Thinking: 아키텍처 결정
   - Magic: 모든 UI 컴포넌트
 
-workflow:
-  1. Phase 명령 받음
+workflow: 1. Phase 명령 받음
   2. Context7로 관련 문서 확인
   3. Sequential Thinking으로 계획
   4. 구현 (Context7 참고 + Magic)
@@ -634,14 +825,14 @@ workflow:
 ```
 
 #### 디버깅 페르소나 (문제 해결 시)
+
 ```yaml
 primary_mcp:
   - Sequential Thinking: 원인 분석
   - Context7: 공식 해결책 검색
   - Bash: 검증 스크립트
 
-workflow:
-  1. 에러 메시지 분석
+workflow: 1. 에러 메시지 분석
   2. Sequential Thinking으로 가능한 원인 나열
   3. Context7로 공식 해결 방법 확인
   4. 수정 적용
@@ -649,14 +840,14 @@ workflow:
 ```
 
 #### 최적화 페르소나 (성능 개선 시)
+
 ```yaml
 primary_mcp:
   - Sequential Thinking: 병목 분석
   - Context7: 최적화 패턴 확인
   - Playwright: 성능 측정
 
-workflow:
-  1. Sequential Thinking으로 성능 문제 분석
+workflow: 1. Sequential Thinking으로 성능 문제 분석
   2. Context7로 권장 최적화 기법 검색
   3. 최적화 적용
   4. Playwright로 before/after 측정
@@ -684,33 +875,34 @@ workflow:
 ### 각 Phase의 실행 → 검증 사이클
 
 #### Phase 실행 워크플로우
+
 ```yaml
 step_1_planning:
-  action: "Phase 명령 실행"
+  action: 'Phase 명령 실행'
   tools: [TodoWrite, Sequential Thinking]
-  output: "구현 계획 및 작업 리스트"
+  output: '구현 계획 및 작업 리스트'
 
 step_2_learning:
-  action: "Context7로 공식 문서 확인"
+  action: 'Context7로 공식 문서 확인'
   tools: [Context7]
-  output: "공식 패턴 및 예제 코드"
+  output: '공식 패턴 및 예제 코드'
 
 step_3_implementation:
-  action: "코드 작성 및 통합"
+  action: '코드 작성 및 통합'
   tools: [Native Claude Code, Magic]
-  output: "작동하는 코드"
-  validation: "pnpm type-check && pnpm build"
+  output: '작동하는 코드'
+  validation: 'pnpm type-check && pnpm build'
 
 step_4_manual_testing:
-  action: "수동 기능 테스트"
+  action: '수동 기능 테스트'
   tools: [Bash, Playwright]
-  output: "기능 작동 확인"
-  validation: "curl 테스트 또는 브라우저 확인"
+  output: '기능 작동 확인'
+  validation: 'curl 테스트 또는 브라우저 확인'
 
 step_5_verification:
-  action: "/verify-phase [N] 실행"
-  output: "완성도 리포트"
-  decision: "80% 이상이면 다음 Phase, 아니면 수정"
+  action: '/verify-phase [N] 실행'
+  output: '완성도 리포트'
+  decision: '80% 이상이면 다음 Phase, 아니면 수정'
 ```
 
 #### 실전 예시: Phase 2 (Auth) 워크플로우
@@ -757,6 +949,7 @@ TodoWrite: 5개 작업 생성
 ### 품질 관리 (자동화 중심)
 
 #### 코드 품질 체크포인트
+
 ```yaml
 every_file_write:
   - [ ] TypeScript 컴파일 확인
@@ -780,6 +973,7 @@ every_phase_complete:
 #### 자동 검증 스크립트
 
 **scripts/verify-build.sh**:
+
 ```bash
 #!/bin/bash
 set -e
@@ -791,6 +985,7 @@ echo "✅ Build successful!"
 ```
 
 **scripts/verify-types.sh**:
+
 ```bash
 #!/bin/bash
 set -e
@@ -802,6 +997,7 @@ echo "✅ No type errors!"
 ```
 
 **scripts/verify-phase.sh** (예시: Phase 2):
+
 ```bash
 #!/bin/bash
 
@@ -858,7 +1054,7 @@ echo "🎉 Phase 2 verification: 100%"
 
 ```yaml
 step_1_identify:
-  action: "에러 메시지 정확히 읽기"
+  action: '에러 메시지 정확히 읽기'
   questions:
     - 컴파일 에러? → TypeScript/ESLint
     - 런타임 에러? → 로그 확인
@@ -866,25 +1062,26 @@ step_1_identify:
     - UI 에러? → 브라우저 DevTools
 
 step_2_research:
-  action: "Context7로 공식 해결책 검색"
-  example: "/context7 prisma migration error"
+  action: 'Context7로 공식 해결책 검색'
+  example: '/context7 prisma migration error'
 
 step_3_analyze:
-  action: "Sequential Thinking으로 원인 분석"
-  output: "가능한 원인 3-5가지 리스트"
+  action: 'Sequential Thinking으로 원인 분석'
+  output: '가능한 원인 3-5가지 리스트'
 
 step_4_fix:
-  action: "각 원인 하나씩 테스트"
-  validation: "수정 후 즉시 재검증"
+  action: '각 원인 하나씩 테스트'
+  validation: '수정 후 즉시 재검증'
 
 step_5_prevent:
-  action: "재발 방지 패턴 문서화"
-  output: "CLAUDE.md 또는 주석에 추가"
+  action: '재발 방지 패턴 문서화'
+  output: 'CLAUDE.md 또는 주석에 추가'
 ```
 
 #### 일반적인 에러 대응 매뉴얼
 
 **Prisma Migration 실패**:
+
 ```bash
 # 1. 현재 상태 확인
 pnpm prisma migrate status
@@ -898,6 +1095,7 @@ pnpm prisma migrate dev
 ```
 
 **TypeScript 에러**:
+
 ```bash
 # 1. 정확한 에러 위치 확인
 pnpm type-check
@@ -909,6 +1107,7 @@ pnpm type-check
 ```
 
 **API 연결 실패**:
+
 ```bash
 # 1. 서버 실행 확인
 curl http://localhost:3001/health
@@ -968,6 +1167,7 @@ echo "✅ All checks passed! Safe to commit."
 ## 🔒 보안 & 컴플라이언스
 
 ### 데이터 보호
+
 ```yaml
 encryption:
   - JWT 토큰 24시간 만료
@@ -983,6 +1183,7 @@ content_safety:
 ```
 
 ### 개인정보 처리
+
 ```yaml
 data_retention:
   - 사용자 계정: 탈퇴 후 즉시 삭제
@@ -999,6 +1200,7 @@ privacy:
 ## 📊 성능 & 모니터링
 
 ### 핵심 지표
+
 ```yaml
 user_engagement:
   - 일일 활성 사용자 (DAU)
@@ -1014,6 +1216,7 @@ technical_metrics:
 ```
 
 ### 모니터링 도구
+
 ```yaml
 application:
   - Sentry (에러 추적)
@@ -1029,6 +1232,7 @@ infrastructure:
 ## 🚀 배포 & 운영
 
 ### 환경 설정
+
 ```yaml
 development:
   - 로컬 Docker 환경
@@ -1047,9 +1251,9 @@ production:
 ```
 
 ### CI/CD 파이프라인
+
 ```yaml
-workflow:
-  1. Pull Request → 자동 테스트
+workflow: 1. Pull Request → 자동 테스트
   2. Merge → Staging 배포
   3. 검증 완료 → Production 배포
   4. 모니터링 & 알림
@@ -1063,12 +1267,14 @@ rollback:
 ## 💡 개발 시 주의사항
 
 ### 공통 원칙
+
 1. **사용자 경험 우선**: 모든 기술적 결정은 사용자 경험을 기준으로
 2. **점진적 개선**: 완벽한 기능보다 빠른 검증과 반복 개선
 3. **확장성 고려**: 100만 사용자를 염두에 둔 아키텍처 설계
 4. **안전성 최우선**: 부적절한 콘텐츠 차단 시스템 필수
 
 ### 금지사항
+
 ```yaml
 avoid:
   - console.log (프로덕션)
@@ -1082,17 +1288,20 @@ avoid:
 ## 🎓 학습 리소스 & 학술적 배경
 
 ### 필수 문서
+
 - [React 18 공식 문서](https://react.dev)
 - [NestJS 공식 문서](https://nestjs.com)
 - [Prisma 가이드](https://prisma.io/docs)
 - [shadcn/ui 컴포넌트](https://ui.shadcn.com)
 
 ### AI/ML 리소스
+
 - [OpenAI API 문서](https://platform.openai.com/docs)
 - [pgvector 가이드](https://github.com/pgvector/pgvector)
 - [RAG 구현 패턴](https://docs.anthropic.com/claude/docs)
 
 ### 📚 학술적 참고문헌
+
 ```yaml
 software_engineering:
   - "Clean Architecture" by Robert C. Martin (2017)
@@ -1111,6 +1320,7 @@ real_time_systems:
 ```
 
 ### 🏆 과제 평가 포인트
+
 ```yaml
 기술적_깊이:
   - 고급 데이터 구조 활용 (pgvector, B-tree 인덱싱)
@@ -1164,13 +1374,16 @@ AI_활용: 40점 ⭐ 가장 중요!
 ### 1️⃣ 백엔드 개발 역량 (40점) - 목표: 36-38점
 
 #### 아키텍처 설계 (10점)
+
 **평가 요소**:
+
 - NestJS 모듈 구조의 명확성
 - 레이어 분리 (Controller → Service → Repository)
 - Dependency Injection 활용
 - 확장 가능한 설계
 
 **고득점 전략**:
+
 ```typescript
 // ✅ 명확한 모듈 구조
 /apps/server/src
@@ -1191,13 +1404,16 @@ AI_활용: 40점 ⭐ 가장 중요!
 ```
 
 #### 데이터 모델링 (10점)
+
 **평가 요소**:
+
 - Prisma schema의 정규화
 - 관계 설정의 적절성
 - 인덱싱 전략
 - 데이터 무결성 제약
 
 **고득점 전략**:
+
 ```prisma
 // ✅ 완벽한 데이터 모델링
 model Story {
@@ -1228,13 +1444,16 @@ model Story {
 ```
 
 #### API 설계 (10점)
+
 **평가 요소**:
+
 - RESTful 원칙 준수
 - 일관된 응답 형식
 - DTO 검증
 - 에러 응답 표준화
 
 **고득점 전략**:
+
 ```typescript
 // ✅ 완벽한 API 설계
 @Controller('stories')
@@ -1242,9 +1461,9 @@ model Story {
 export class StoryController {
   @Post('generate')
   @UseGuards(ThrottlerGuard)
-  @Throttle(5, 60)  // Rate limiting
+  @Throttle(5, 60) // Rate limiting
   async generateStory(
-    @Body() dto: GenerateStoryDto,  // DTO 검증
+    @Body() dto: GenerateStoryDto, // DTO 검증
     @CurrentUser() user: User,
   ): Promise<StoryResponseDto> {
     return this.storyService.generateStory(dto, user.id);
@@ -1273,13 +1492,16 @@ export class GenerateStoryDto {
 ```
 
 #### 에러 처리 및 보안 (10점)
+
 **평가 요소**:
+
 - 전역 Exception Filter
 - 입력 검증
 - Rate Limiting
 - 보안 헤더
 
 **고득점 전략**:
+
 ```typescript
 // ✅ 전역 에러 처리
 @Catch(HttpException)
@@ -1314,6 +1536,7 @@ app.useGlobalFilters(new HttpExceptionFilter());
 #### 학습 과정에서의 AI 활용 (10점)
 
 **평가 요소**:
+
 - Context7을 통한 공식 문서 학습 과정 증명
 - 학습 내용의 프로젝트 적용
 - 학습 과정 문서화
@@ -1321,7 +1544,8 @@ app.useGlobalFilters(new HttpExceptionFilter());
 **고득점 전략**:
 
 **Phase Commands에 AI 학습 전략 명시**:
-```markdown
+
+````markdown
 # phase4-story-gen.md에 추가
 
 ## 🤖 AI 활용 학습 전략
@@ -1356,6 +1580,7 @@ app.useGlobalFilters(new HttpExceptionFilter());
 - 토큰 최적화 전략
 - Safety & moderation
 ```
+````
 
 ### Step 2: 학습 내용 코드 적용
 
@@ -1368,23 +1593,24 @@ const response = await this.openai.chat.completions.create({
   messages: [
     {
       role: 'system',
-      content: writerSystemPrompt,  // 학습한 system message 패턴
+      content: writerSystemPrompt, // 학습한 system message 패턴
     },
     {
       role: 'user',
       content: storyRequest,
-    }
+    },
   ],
-  temperature: 0.9,  // 창의성 최적화 (공식 문서 권장)
+  temperature: 0.9, // 창의성 최적화 (공식 문서 권장)
   max_tokens: 3000,
-  presence_penalty: 0.6,  // 다양성 증진
-  frequency_penalty: 0.3,  // 반복 감소
+  presence_penalty: 0.6, // 다양성 증진
+  frequency_penalty: 0.3, // 반복 감소
 });
 ```
 
 ### Step 3: 학습 과정 문서화
 
 README.md나 개발 일지에 작성:
+
 ```markdown
 ## AI 학습 과정
 
@@ -1393,6 +1619,7 @@ README.md나 개발 일지에 작성:
 **학습 도구**: Context7 (공식 문서 조회)
 
 **학습 내용**:
+
 1. OpenAI GPT-4 API 기본 구조
    - Context7 검색: "openai gpt-4 chat completions"
    - 핵심 학습: messages 배열 구조, role 타입 (system/user/assistant)
@@ -1406,10 +1633,12 @@ README.md나 개발 일지에 작성:
    - 핵심 학습: AsyncGenerator 패턴, SSE 프로토콜
 
 **적용 결과**:
+
 - [코드 파일 링크]
 - [실제 작동 스크린샷]
 ```
-```
+
+````
 
 **증빙 자료 준비**:
 - Context7 검색 스크린샷
@@ -1434,11 +1663,13 @@ README.md나 개발 일지에 작성:
 
 ### Sequential Thinking 분석 과정
 
-```
+````
+
 Sequential Thinking 질문:
 "GPT-4가 요청한 단어 수보다 적게 생성하는 원인을 분석하고 해결 방법을 제시하라"
 
 사고 과정:
+
 1. 가능한 원인 나열
    - max_tokens 설정이 부족?
    - 프롬프트 명확성 문제?
@@ -1454,7 +1685,8 @@ Sequential Thinking 질문:
    - 프롬프트 개선: 절대적 지시 추가
    - Few-shot examples: 긴 소설 예시 제공
    - 토큰 여유: max_tokens 4000으로 증가
-```
+
+````
 
 ### Context7로 해결책 검색
 
@@ -1465,7 +1697,7 @@ Sequential Thinking 질문:
 - System message에 "반드시 N단어 이상 작성" 명시
 - Few-shot examples로 기대 길이 학습
 - finish_reason 모니터링으로 조기 종료 감지
-```
+````
 
 ### 해결 코드
 
@@ -1497,10 +1729,12 @@ if (wordCount < 1500) {
 ```
 
 ### 결과
+
 - Before: 800-1000 단어
 - After: 1,600-2,000 단어 ✅
 - 해결 시간: 2시간 (Sequential로 체계적 접근)
-```
+
+````
 
 #### 프롬프트 엔지니어링 (10점)
 
@@ -1595,11 +1829,12 @@ await prisma.promptVersion.create({
     }
   }
 });
-```
+````
 
 #### AI 도구 다양성 및 전략 (10점)
 
 **평가 요소**:
+
 - 여러 AI 도구의 조합 활용
 - 각 도구의 적재적소 사용
 - 도구 활용 전략 문서화
@@ -1611,7 +1846,9 @@ await prisma.promptVersion.create({
 
 ### Phase 1: 프로젝트 초기화
 ```
+
 도구 조합:
+
 1. Context7: pnpm workspaces, NestJS 초기 설정 학습
 2. Sequential: 모노레포 구조 설계 의사결정
 3. Magic: 불필요 (백엔드 설정)
@@ -1619,11 +1856,14 @@ await prisma.promptVersion.create({
 
 워크플로우:
 Context7 → Sequential → Native Implementation
+
 ```
 
 ### Phase 2: 인증 시스템
 ```
+
 도구 조합:
+
 1. Context7: NestJS JWT, Prisma 관계 학습
 2. Sequential: JWT vs Session 트레이드오프 분석
 3. Magic: 로그인/회원가입 UI 컴포넌트 생성
@@ -1633,11 +1873,14 @@ Context7 → Sequential → Native Implementation
 Context7 (학습) → Sequential (설계) →
 Native (Backend) → Magic (Frontend) →
 Playwright (검증)
+
 ```
 
 ### Phase 4: AI 소설 생성 ⭐
 ```
+
 도구 조합:
+
 1. Context7: OpenAI API, Streaming 학습
 2. Sequential:
    - 프롬프트 구조 설계
@@ -1657,6 +1900,7 @@ Native (AIService 구현) →
 Magic (UI 생성) →
 Playwright (E2E 검증) →
 Sequential (성능 분석 및 개선)
+
 ```
 
 ## AI 도구 의사결정 매트릭스
@@ -1699,6 +1943,7 @@ Sequential (성능 분석 및 개선)
 #### 계획한 주요 기능 작동 (10점)
 
 **평가 요소**:
+
 - Phase 1-5의 핵심 기능 모두 작동
 - 에러 없이 안정적 실행
 - 실제 사용 시나리오 커버
@@ -1743,6 +1988,7 @@ Phase 5 (Library):
 #### 구현의 완성도 (10점)
 
 **평가 요소**:
+
 - 코드 품질
 - 에러 핸들링
 - Production 준비도
@@ -1859,6 +2105,7 @@ logger.info('Story generated', { storyId, userId, duration });
 ### 점수 예측 및 개선 로드맵
 
 #### 현재 Commands만으로 (개선 전)
+
 ```
 백엔드: 30-32/40 (75-80%)
 AI 활용: 21-24/40 (52-60%) 🚨
@@ -1868,6 +2115,7 @@ AI 활용: 21-24/40 (52-60%) 🚨
 ```
 
 #### 권장사항 적용 후
+
 ```
 백엔드: 36-38/40 (90-95%)
   → Phase 6 추가로 에러 처리, 보안, 테스트 완비
