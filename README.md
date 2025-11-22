@@ -12,6 +12,7 @@ AI 작가 페르소나를 선택하고 스타일을 조합하여 나만의 단�
 **AI 개발자로 전향하기 위한 포트폴리오 프로젝트**
 
 ### 포트폴리오 강점
+
 - ✅ **완성도 높은 풀스택 프로젝트** (1-2주 완성 가능)
 - ✅ **최신 AI 기술 실전 활용** (OpenAI GPT-4, Claude API)
 - ✅ **프롬프트 엔지니어링** 전문성 입증
@@ -19,6 +20,7 @@ AI 작가 페르소나를 선택하고 스타일을 조합하여 나만의 단�
 - ✅ **현대적 기술 스택** (React 18, NestJS, Prisma)
 
 ### 주요 AI 활용 사례
+
 - 🤖 **작가 페르소나 시스템**: SystemPrompt를 통한 AI 캐릭터 구현
 - 🎨 **스타일 조합 엔진**: 장르/분위기/결말 태그 기반 프롬프트 생성
 - 📝 **고품질 소설 생성**: Temperature, Penalty 파라미터 튜닝
@@ -26,7 +28,7 @@ AI 작가 페르소나를 선택하고 스타일을 조합하여 나만의 단�
 
 ---
 
-## 🏗️ 아키텍처
+## 🏗️ 프로젝트 구조
 
 ```
 snack-storyteller/
@@ -53,9 +55,32 @@ snack-storyteller/
 │   ├── types/              # TypeScript 타입 정의
 │   └── utils/              # 유틸리티 함수
 │
+├── specs/                  # Spec-Driven Development
+│   ├── constitution.md     # 프로젝트 불변 원칙
+│   ├── phase1-init/        # Phase 1 명세
+│   ├── phase2-auth/        # Phase 2 명세
+│   ├── phase3-writers/     # Phase 3 명세
+│   ├── phase4-story-gen/   # Phase 4 명세 (AI 핵심)
+│   └── phase5-library/     # Phase 5 명세
+│
+├── docs/                   # 프로젝트 문서
+│   ├── README.md
+│   └── testing/            # TDD 문서
+│       ├── test-cases.md   # 62개 테스트 케이스
+│       ├── fixtures.md     # 테스트 데이터
+│       └── test-strategy.md # 테스트 전략
+│
+├── .claude/                # AI 개발 전용
+│   ├── commands/           # Phase Commands
+│   └── docs/
+│       ├── methodology/    # AI 개발 방법론
+│       ├── learning/       # AI 학습 자료
+│       └── reports/        # Phase 완료 리포트
+│
 ├── docker-compose.yml      # PostgreSQL 개발 환경
 ├── pnpm-workspace.yaml     # 모노레포 설정
-└── CLAUDE.md               # 개발 가이드라인
+├── CLAUDE.md               # AI 개발 가이드라인
+└── README.md               # 이 파일
 ```
 
 ---
@@ -63,6 +88,7 @@ snack-storyteller/
 ## 🚀 기술 스택
 
 ### Frontend
+
 - **React 18** + **TypeScript** + **Vite** - 최신 프론트엔드 스택
 - **shadcn/ui** + **TailwindCSS** - 모던 UI 컴포넌트
 - **TanStack Query** - 서버 상태 관리
@@ -70,6 +96,7 @@ snack-storyteller/
 - **React Router v6** - SPA 라우팅
 
 ### Backend
+
 - **NestJS** + **TypeScript** - 확장 가능한 백엔드 프레임워크
 - **Prisma ORM** - 타입 안전한 데이터베이스 쿼리
 - **PostgreSQL** - 관계형 데이터베이스
@@ -77,11 +104,13 @@ snack-storyteller/
 - **class-validator** - DTO 유효성 검증
 
 ### AI Integration
+
 - **OpenAI GPT-4** - 주요 소설 생성 엔진
 - **Anthropic Claude** - 폴백 AI 제공자
 - **Prompt Engineering** - 스타일 기반 프롬프트 생성
 
 ### Infrastructure
+
 - **Docker** + **docker-compose** - 컨테이너 환경
 - **pnpm workspaces** - 모노레포 관리
 - **Vercel** (Frontend) + **Railway** (Backend) - 배포 (예정)
@@ -91,6 +120,7 @@ snack-storyteller/
 ## 📊 데이터베이스 스키마
 
 ### Writer (작가 페르소나)
+
 ```prisma
 model Writer {
   id           String    @id @default(cuid())
@@ -108,6 +138,7 @@ model Writer {
 ```
 
 ### Story (생성된 소설)
+
 ```prisma
 model Story {
   id          String   @id @default(cuid())
@@ -131,6 +162,7 @@ model Story {
 ```
 
 ### StyleTag (스타일 태그)
+
 ```prisma
 model StyleTag {
   id          String      @id @default(cuid())
@@ -153,11 +185,13 @@ enum TagCategory {
 ## 🎯 핵심 기능
 
 ### 1️⃣ 작가 페르소나 시스템 (Phase 3)
+
 - 다양한 AI 작가 스타일 생성 및 관리
 - SystemPrompt를 통한 작가 개성 정의
 - 공개/비공개 작가 공유 시스템
 
 ### 2️⃣ AI 소설 생성 (Phase 4) ⭐
+
 - **스타일 조합**: 장르 + 분위기 + 결말 (최대 3개 선택)
 - **프롬프트 엔지니어링**: 작가 페르소나 + 스타일 태그 → 완성된 프롬프트
 - **고급 파라미터 튜닝**:
@@ -168,6 +202,7 @@ enum TagCategory {
 - **메타데이터 계산**: 단어 수, 예상 읽기 시간
 
 ### 3️⃣ 소설 라이브러리 (Phase 5)
+
 - 페이지네이션 및 필터링 (작가별, 태그별)
 - 검색 기능 (제목, 내용)
 - 북마크 시스템
@@ -178,11 +213,13 @@ enum TagCategory {
 ## 🛠️ 빠른 시작
 
 ### 사전 요구사항
+
 - Node.js 18+
 - pnpm 9+
 - Docker & Docker Compose
 
 ### 1. 클론 및 설치
+
 ```bash
 git clone https://github.com/your-username/snack-storyteller.git
 cd snack-storyteller
@@ -190,6 +227,7 @@ pnpm install
 ```
 
 ### 2. 환경 변수 설정
+
 ```bash
 # .env 파일 생성
 cp apps/server/.env.example apps/server/.env
@@ -202,26 +240,31 @@ DATABASE_URL=postgresql://...   # PostgreSQL 연결 문자열
 ```
 
 ### 3. 데이터베이스 시작
+
 ```bash
 docker-compose up -d postgres
 ```
 
 ### 4. 데이터베이스 스키마 적용
+
 ```bash
-pnpm db:push
+cd apps/server
+pnpm prisma migrate dev
 ```
 
 ### 5. 개발 서버 시작
+
 ```bash
-# 프론트엔드 + 백엔드 동시 실행
+# 루트에서 전체 실행
 pnpm dev
 
 # 또는 개별 실행
-pnpm server:dev  # 백엔드 :3001
-pnpm web:dev     # 프론트엔드 :5173
+pnpm --filter server dev  # 백엔드 :3001
+pnpm --filter web dev     # 프론트엔드 :5173
 ```
 
 ### 6. 브라우저 접속
+
 ```
 http://localhost:5173
 ```
@@ -230,28 +273,33 @@ http://localhost:5173
 
 ## 📝 개발 로드맵 (5 Phases)
 
-### ✅ Phase 1: 프로젝트 초기화
+### ✅ Phase 1: 프로젝트 초기화 (완료)
+
 - 모노레포 구조 설정 (pnpm workspaces)
 - Docker 개발 환경 구성
 - 기본 React + NestJS 앱 생성
 
-### ✅ Phase 2: 인증 시스템
+### ✅ Phase 2: 인증 시스템 (완료)
+
 - JWT 기반 회원가입/로그인
 - Passport 전략 구현
 - 보호된 라우트 설정
 
-### 🔄 Phase 3: 작가 페르소나 관리
+### 🔄 Phase 3: 작가 페르소나 관리 (진행 예정)
+
 - Writer 모델 및 API 구현
 - 작가 생성/편집 UI
 - SystemPrompt 편집기
 
-### 🔄 Phase 4: AI 소설 생성 ⭐ (핵심)
+### 🔄 Phase 4: AI 소설 생성 ⭐ (진행 예정)
+
 - OpenAI/Claude API 통합
 - 프롬프트 엔지니어링 시스템
 - 스타일 태그 조합 로직
 - 소설 생성 UI 및 로딩 상태
 
-### ⏳ Phase 5: 소설 라이브러리
+### ⏳ Phase 5: 소설 라이브러리 (진행 예정)
+
 - 라이브러리 페이지 (필터링, 검색)
 - 읽기 인터페이스
 - 북마크 시스템
@@ -262,6 +310,7 @@ http://localhost:5173
 ## 🎨 UI/UX 미리보기
 
 ### 메인 화면
+
 ```
 ┌─────────────────────────────────────┐
 │  🎭 Snack Storyteller               │
@@ -281,6 +330,7 @@ http://localhost:5173
 ```
 
 ### 생성 중 화면
+
 ```
 ┌─────────────────────────────────────┐
 │  하드보일드 작가가 소설을 쓰고 있어요...│
@@ -294,6 +344,7 @@ http://localhost:5173
 ```
 
 ### 완성된 소설 읽기
+
 ```
 ┌─────────────────────────────────────┐
 │  ← 뒤로    🔖 북마크    🔄 새로생성  │
@@ -314,6 +365,7 @@ http://localhost:5173
 ## 🧠 AI 프롬프트 엔지니어링 예시
 
 ### SystemPrompt 구조
+
 ```typescript
 // 하드보일드 작가 페르소나
 const systemPrompt = `
@@ -338,6 +390,7 @@ const systemPrompt = `
 ```
 
 ### 최종 프롬프트 생성
+
 ```typescript
 const buildStoryPrompt = (writerPrompt, tags) => `
 ${writerPrompt}
@@ -369,17 +422,20 @@ ${writerPrompt}
 ## 📈 성능 최적화
 
 ### API 응답 시간
+
 - 소설 생성: ~15-30초 (GPT-4 기준)
 - 작가 목록 조회: <100ms
 - 소설 목록 조회: <200ms
 
 ### 프론트엔드 최적화
+
 - React.lazy() 코드 스플리팅
 - TanStack Query 캐싱
 - Virtualized 무한 스크롤
 - 이미지 lazy loading
 
 ### 백엔드 최적화
+
 - Prisma 쿼리 최적화 (include, select)
 - 데이터베이스 인덱싱
 - 연결 풀링 (PostgreSQL)
@@ -389,28 +445,35 @@ ${writerPrompt}
 ## 🧪 테스트 전략
 
 ### 단위 테스트 (Jest)
+
 ```bash
 pnpm test
 ```
+
 - AI 서비스 로직
 - 프롬프트 생성 함수
 - 유틸리티 함수
 
 ### 통합 테스트
+
 - API 엔드포인트 테스트
 - 데이터베이스 트랜잭션
 - 인증 플로우
 
 ### E2E 테스트 (Playwright)
+
 - 소설 생성 플로우
 - 작가 생성 플로우
 - 북마크 기능
+
+자세한 테스트 문서는 [`docs/testing/`](docs/testing/) 참고.
 
 ---
 
 ## 📦 배포 가이드
 
 ### 프론트엔드 (Vercel)
+
 ```bash
 cd apps/web
 pnpm build
@@ -418,12 +481,14 @@ vercel deploy
 ```
 
 ### 백엔드 (Railway)
+
 ```bash
 cd apps/server
 railway up
 ```
 
 ### 환경 변수 설정 (Production)
+
 ```bash
 DATABASE_URL=postgresql://...
 OPENAI_API_KEY=sk-...
@@ -437,24 +502,28 @@ NODE_ENV=production
 ## 💼 포트폴리오 하이라이트
 
 ### 🤖 AI 통합 전문성
+
 - ✅ OpenAI GPT-4 API 실전 활용
 - ✅ Anthropic Claude API 통합 및 폴백 전략
 - ✅ 프롬프트 엔지니어링 (Temperature, Penalty 튜닝)
 - ✅ 컨텍스트 빌딩 및 시스템 프롬프트 설계
 
 ### 🏗️ 풀스택 아키텍처
+
 - ✅ 모노레포 구조 (pnpm workspaces)
 - ✅ TypeScript 전역 타입 안전성
 - ✅ RESTful API 설계 (NestJS)
 - ✅ ORM 활용 (Prisma)
 
 ### 🎨 현대적 프론트엔드
+
 - ✅ React 18 최신 기능 활용
 - ✅ 컴포넌트 기반 설계 (shadcn/ui)
 - ✅ 상태 관리 전략 (Zustand + TanStack Query)
 - ✅ 반응형 UI/UX
 
 ### 🔧 DevOps & 인프라
+
 - ✅ Docker 컨테이너화
 - ✅ 환경 변수 관리
 - ✅ Git 버전 관리
@@ -464,22 +533,36 @@ NODE_ENV=production
 
 ## 📚 기술 문서
 
-- [Phase 3: 작가 관리](.claude/commands/phase3-writers.md)
-- [Phase 4: AI 소설 생성](.claude/commands/phase4-story-gen.md)
-- [Phase 5: 소설 라이브러리](.claude/commands/phase5-library.md)
-- [개발 가이드라인](CLAUDE.md)
+### 개발 가이드
+
+- [AI 개발 가이드라인](CLAUDE.md) - SuperClaude Framework 기반 개발 원칙
+- [프로젝트 불변 원칙](specs/constitution.md) - SDD Constitution
+
+### Phase별 명세 (Spec-Driven Development)
+
+- [Phase 3: 작가 관리](specs/phase3-writers/) - spec.md, plan.md, tasks.md
+- [Phase 4: AI 소설 생성](specs/phase4-story-gen/) - spec.md, plan.md, tasks.md
+- [Phase 5: 소설 라이브러리](specs/phase5-library/) - spec.md, plan.md, tasks.md
+
+### 테스트 문서
+
+- [테스트 케이스](docs/testing/test-cases.md) - 62개 상세 테스트 케이스
+- [테스트 Fixtures](docs/testing/fixtures.md) - 재사용 가능한 테스트 데이터
+- [테스트 전략](docs/testing/test-strategy.md) - Mocking, 격리, CI/CD
 
 ---
 
 ## 🎓 학습 및 개선 사항
 
 ### 기술적 도전 과제
+
 1. **프롬프트 엔지니어링**: AI 작가 페르소나를 자연스럽게 표현
 2. **컨텍스트 관리**: 스타일 태그를 프롬프트로 변환
 3. **성능 최적화**: 15-30초 소설 생성 시간 단축 연구
 4. **에러 핸들링**: AI API 실패 시 폴백 전략
 
 ### 향후 개선 방향
+
 - [ ] 벡터 DB (pgvector) 활용 유사 소설 추천
 - [ ] 스트리밍 방식 적용 (실시간 소설 생성 표시)
 - [ ] 멀티모달 (이미지 생성 통합)
