@@ -9,6 +9,8 @@ import {
   EditWriterPage,
   WriterDetailPage,
   MyWritersPage,
+  LibraryPage,
+  StoryDetailPage,
 } from './pages';
 
 const queryClient = new QueryClient({
@@ -75,6 +77,10 @@ function App() {
               <Route path="/writers/:id" element={<WriterDetailPage />} />
               <Route path="/writers/:id/edit" element={<EditWriterPage />} />
               <Route path="/my-writers" element={<MyWritersPage />} />
+
+              {/* Stories / Library */}
+              <Route path="/library" element={<LibraryPage />} />
+              <Route path="/stories/:id" element={<StoryDetailPage />} />
 
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />
