@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { AIModule } from './ai/ai.module';
 import { StoryModule } from './story/story.module';
 import { WriterModule } from './writer/writer.module';
+import { BookmarkModule } from './bookmark/bookmark.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { WriterModule } from './writer/writer.module';
     AIModule,
     StoryModule,
     WriterModule,
+    BookmarkModule,
   ],
   controllers: [AppController],
   providers: [AppService],

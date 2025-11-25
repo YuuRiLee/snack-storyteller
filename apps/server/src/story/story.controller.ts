@@ -22,6 +22,8 @@ import {
   GenerateStoryQueryDto,
   StoryFiltersDto,
   StoryDto,
+  StoryWithBookmarkDto,
+  StoryStatsDto,
   PaginatedStoriesDto,
 } from './dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -49,8 +51,10 @@ function getUserIdOrThrow(req: RequestWithUser): string {
  *
  * Routes:
  * - POST /stories/generate - Generate new story
- * - GET /stories - List user's stories (paginated)
- * - GET /stories/:id - Get single story
+ * - GET /stories/generate/stream - Generate story with SSE streaming
+ * - GET /stories/stats - Get user story statistics
+ * - GET /stories - List user's stories (paginated, filtered, sorted)
+ * - GET /stories/:id - Get single story with bookmark status
  * - DELETE /stories/:id - Delete story
  *
  * Authentication: All routes require JWT (JwtAuthGuard)
@@ -111,11 +115,40 @@ export class StoryController {
   }
 
   /**
+   * Get user story statistics
+   *
+   * GET /stories/stats
+   *
+   * Response: StoryStatsDto
+   * - totalStories: number
+   * - totalWords: number
+   * - totalReadTime: number
+   * - averageWordCount: number
+   * - topTags: Array<{ tag: string, count: number }>
+   * - bookmarkedCount: number
+   */
+  @Get('stats')
+  async getStats(@Req() req: RequestWithUser): Promise<StoryStatsDto> {
+    const userId = getUserIdOrThrow(req);
+    return this.storyService.getUserStats(userId);
+  }
+
+  /**
    * List user's stories
    *
-   * GET /stories?page=1&limit=20&search=keyword&tag=로맨스&writerId=xxx
+   * GET /stories?page=1&limit=20&search=keyword&tag=로맨스&writerId=xxx&bookmarked=true&sort=createdAt&order=desc
    *
-   * Response: PaginatedStoriesDto
+   * Query Parameters:
+   * - page (default: 1)
+   * - limit (default: 20, max: 50)
+   * - search: Search in title and content (case-insensitive)
+   * - tag: Filter by single tag
+   * - writerId: Filter by writer
+   * - bookmarked: Filter only bookmarked stories (boolean)
+   * - sort: createdAt | wordCount | readTime (default: createdAt)
+   * - order: asc | desc (default: desc)
+   *
+   * Response: PaginatedStoriesDto with isBookmarked field
    */
   @Get()
   async listStories(
@@ -127,17 +160,20 @@ export class StoryController {
   }
 
   /**
-   * Get single story
+   * Get single story with bookmark status
    *
    * GET /stories/:id
    *
-   * Response: StoryDto
+   * Response: StoryWithBookmarkDto
+   * - All StoryDto fields
+   * - isBookmarked: boolean
+   * - bookmarkCount: number
    */
   @Get(':id')
   async getStory(
     @Param('id') id: string,
     @Req() req: RequestWithUser,
-  ): Promise<StoryDto> {
+  ): Promise<StoryWithBookmarkDto> {
     const userId = getUserIdOrThrow(req);
     return this.storyService.getStoryById(id, userId);
   }

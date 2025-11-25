@@ -64,9 +64,12 @@ model Story {
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   bookmarks Bookmark[]
 
-  @@index([userId, createdAt])
-  @@index([writerId])
-  @@index([isPublic, createdAt])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([writerId, createdAt(sort: Desc)])
+  @@index([isPublic, createdAt(sort: Desc)])
+  @@index([wordCount(sort: Desc)])
+  @@index([readTime(sort: Desc)])
+  @@index([tags])
 }
 
 // Bookmark model - Phase 5
@@ -80,5 +83,6 @@ model Bookmark {
   story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
 
   @@unique([userId, storyId])
-  @@index([userId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([storyId])
 }

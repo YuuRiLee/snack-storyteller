@@ -5,6 +5,7 @@ import {
   MessageEvent,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AIService } from '../ai/ai.service';
 import { ModerationService } from '../ai/moderation/moderation.service';
@@ -12,7 +13,11 @@ import {
   GenerateStoryDto,
   StoryFiltersDto,
   StoryDto,
+  StoryWithBookmarkDto,
+  StoryStatsDto,
   PaginatedStoriesDto,
+  SortField,
+  SortOrder,
 } from './dto';
 
 /**
@@ -24,12 +29,15 @@ import {
  * - Story generation with retry logic (max 3 attempts)
  * - Exponential backoff for transient failures
  * - Word count and read time calculation
- * - Pagination and filtering
+ * - Pagination, filtering, searching, and sorting
+ * - User statistics
  *
  * Success Criteria (from spec.md):
  * - Generation time < 30s
  * - Success rate > 95%
  * - 1500-2000 word stories
+ * - List query < 500ms
+ * - Search < 1s
  */
 @Injectable()
 export class StoryService {
@@ -177,46 +185,71 @@ export class StoryService {
   }
 
   /**
-   * Get user's stories with pagination
+   * Get user's stories with pagination, filtering, and sorting
+   *
+   * Features:
+   * - Pagination (page, limit)
+   * - Search (title + content, case-insensitive)
+   * - Tag filter (single tag)
+   * - Writer filter (by writerId)
+   * - Bookmark filter (only bookmarked stories)
+   * - Sorting (createdAt, wordCount, readTime)
    *
    * @param userId - Filter by user
-   * @param filters - Page, limit, search, tag, writerId
-   * @returns Paginated story list
+   * @param filters - Pagination, search, and filter options
+   * @returns Paginated story list with bookmark status
    */
   async getUserStories(
     userId: string,
     filters: StoryFiltersDto,
   ): Promise<PaginatedStoriesDto> {
-    const { page = 1, limit = 20, search, tag, writerId } = filters;
+    const {
+      page = 1,
+      limit = 20,
+      search,
+      tag,
+      writerId,
+      bookmarked,
+      sort = SortField.CREATED_AT,
+      order = SortOrder.DESC,
+    } = filters;
     const skip = (page - 1) * limit;
 
     // Build where clause
+    const where: Prisma.StoryWhereInput = { userId };
 
-    const where: any = { userId };
+    // Tag filter
+    if (tag) {
+      where.tags = { has: tag };
+    }
 
+    // Writer filter
+    if (writerId) {
+      where.writerId = writerId;
+    }
+
+    // Bookmark filter
+    if (bookmarked) {
+      where.bookmarks = {
+        some: { userId },
+      };
+    }
+
+    // Search (title + content)
     if (search) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
         { content: { contains: search, mode: 'insensitive' } },
       ];
     }
 
-    if (tag) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      where.tags = { has: tag };
-    }
-
-    if (writerId) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      where.writerId = writerId;
-    }
+    // Build orderBy clause
+    const orderBy: Prisma.StoryOrderByWithRelationInput = {};
+    orderBy[sort] = order;
 
     // Execute queries in parallel
-
     const [stories, total] = await Promise.all([
       this.prisma.story.findMany({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         where,
         skip,
         take: limit,
@@ -224,15 +257,25 @@ export class StoryService {
           writer: {
             select: { id: true, name: true, imageUrl: true },
           },
+          bookmarks: {
+            where: { userId },
+            select: { id: true },
+          },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy,
       }),
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       this.prisma.story.count({ where }),
     ]);
 
+    // Transform stories with isBookmarked field
+    const storiesWithBookmark = stories.map((story) => ({
+      ...story,
+      isBookmarked: story.bookmarks.length > 0,
+      bookmarks: undefined, // Remove raw bookmarks array
+    }));
+
     return {
-      stories: stories as StoryDto[],
+      stories: storiesWithBookmark as (StoryDto & { isBookmarked: boolean })[],
       total,
       page,
       limit,
@@ -241,18 +284,25 @@ export class StoryService {
   }
 
   /**
-   * Get single story by ID
+   * Get single story by ID with bookmark status
    *
    * @param id - Story ID
-   * @param userId - User ID for ownership check
-   * @returns Story details
+   * @param userId - User ID for ownership check and bookmark status
+   * @returns Story details with bookmark information
    */
-  async getStoryById(id: string, userId: string): Promise<StoryDto> {
+  async getStoryById(id: string, userId: string): Promise<StoryWithBookmarkDto> {
     const story = await this.prisma.story.findFirst({
       where: { id, userId },
       include: {
         writer: {
           select: { id: true, name: true, imageUrl: true },
+        },
+        bookmarks: {
+          where: { userId },
+          select: { id: true },
+        },
+        _count: {
+          select: { bookmarks: true },
         },
       },
     });
@@ -261,7 +311,71 @@ export class StoryService {
       throw new NotFoundException(`Story ${id} not found`);
     }
 
-    return story as StoryDto;
+    return {
+      ...story,
+      isBookmarked: story.bookmarks.length > 0,
+      bookmarkCount: story._count.bookmarks,
+      bookmarks: undefined,
+      _count: undefined,
+    } as StoryWithBookmarkDto;
+  }
+
+  /**
+   * Get user story statistics
+   *
+   * Statistics include:
+   * - Total stories count
+   * - Total words across all stories
+   * - Total read time
+   * - Average word count per story
+   * - Top 5 most used tags
+   * - Number of bookmarked stories
+   *
+   * @param userId - User ID
+   * @returns Aggregated statistics
+   */
+  async getUserStats(userId: string): Promise<StoryStatsDto> {
+    const [stories, bookmarkedCount] = await Promise.all([
+      this.prisma.story.findMany({
+        where: { userId },
+        select: {
+          wordCount: true,
+          readTime: true,
+          tags: true,
+        },
+      }),
+      this.prisma.bookmark.count({
+        where: { userId },
+      }),
+    ]);
+
+    const totalStories = stories.length;
+    const totalWords = stories.reduce((sum, s) => sum + s.wordCount, 0);
+    const totalReadTime = stories.reduce((sum, s) => sum + s.readTime, 0);
+    const averageWordCount =
+      totalStories > 0 ? Math.round(totalWords / totalStories) : 0;
+
+    // Calculate tag frequency
+    const tagCounts = new Map<string, number>();
+    stories.forEach((story) => {
+      story.tags.forEach((tag) => {
+        tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+      });
+    });
+
+    const topTags = Array.from(tagCounts.entries())
+      .map(([tag, count]) => ({ tag, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    return {
+      totalStories,
+      totalWords,
+      totalReadTime,
+      averageWordCount,
+      topTags,
+      bookmarkedCount,
+    };
   }
 
   /**
