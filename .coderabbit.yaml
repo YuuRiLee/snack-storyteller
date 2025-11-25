@@ -1,0 +1,537 @@
+# yaml-language-server: $schema=https://storage.googleapis.com/coderabbit_public_assets/schema.v2.json
+
+# =============================================================================
+# CodeRabbit Configuration for Snack-Storyteller
+# AI 단편 소설 생성 플랫폼 (React + NestJS + Prisma Monorepo)
+# 프로젝트 분석 기반 맞춤 설정 (2025-01)
+# =============================================================================
+
+language: "ko-KR"
+tone_instructions: |
+  한국어로 리뷰를 작성해주세요.
+  - 개발 용어(변수명, 함수명, 기술 용어, 라이브러리명)는 영어로 유지
+  - 설명과 제안은 자연스러운 한국어로 작성
+  - 친근하지만 전문적인 톤 유지
+  - 코드 개선 제안 시 구체적인 예시 코드 포함
+  - AI/프롬프트 관련 코드는 특히 보안과 품질에 주의
+  - 이 프로젝트는 AI 단편 소설 생성 플랫폼입니다
+
+early_access: false
+enable_free_tier: true
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_placeholder: "@coderabbitai summary"
+  high_level_summary_in_walkthrough: true
+  auto_title_placeholder: "@coderabbitai"
+  auto_title_instructions: |
+    PR 제목을 다음 형식으로 생성해주세요:
+    - Conventional Commits 형식 (feat:, fix:, docs:, refactor:, test:, chore:)
+    - 한국어로 간결하게 작성
+    - 예시: "feat(writer): 작가 페르소나 systemPrompt 필드 추가"
+    - 스코프 예시: auth, writer, story, ai, web, prisma
+  review_status: true
+  commit_status: true
+  fail_commit_status: false
+  poem: false
+  collapse_walkthrough: false
+  sequence_diagrams: true
+  changed_files_summary: true
+  estimate_code_review_effort: true
+  assess_linked_issues: true
+  related_issues: true
+  related_prs: true
+  suggested_labels: true
+  auto_apply_labels: false
+  suggested_reviewers: false
+  auto_assign_reviewers: false
+
+  # =============================================================================
+  # 자동 라벨링 규칙 (실제 프로젝트 구조 기반)
+  # =============================================================================
+  labeling_instructions:
+    - label: "frontend"
+      instructions: "apps/web/ 경로의 파일이 변경된 경우"
+    - label: "backend"
+      instructions: "apps/server/ 경로의 파일이 변경된 경우"
+    - label: "ai"
+      instructions: "apps/server/src/ai/ 경로 (prompt, moderation, errors) 파일 변경"
+    - label: "auth"
+      instructions: "apps/server/src/auth/ 경로의 인증 관련 코드 변경"
+    - label: "writer"
+      instructions: "apps/server/src/writer/ 또는 apps/web/src/components/writer/ 변경"
+    - label: "story"
+      instructions: "apps/server/src/story/ 또는 스토리 생성 관련 코드 변경"
+    - label: "database"
+      instructions: "apps/server/prisma/ 경로의 schema 또는 migration 변경"
+    - label: "ui"
+      instructions: "apps/web/src/components/ui/ 또는 packages/ui/ 변경"
+    - label: "shared"
+      instructions: "packages/types/ 또는 packages/utils/ 변경"
+    - label: "documentation"
+      instructions: "README.md, CLAUDE.md, specs/ 경로 변경"
+    - label: "config"
+      instructions: "설정 파일(.env, yaml, json config, docker-compose) 변경"
+
+  # =============================================================================
+  # 리뷰 제외 경로 (실제 프로젝트 구조 기반)
+  # =============================================================================
+  path_filters:
+    - "!**/node_modules/**"
+    - "!**/dist/**"
+    - "!**/build/**"
+    - "!**/.next/**"
+    - "!**/coverage/**"
+    - "!**/*.lock"
+    - "!**/pnpm-lock.yaml"
+    - "!**/*.min.js"
+    - "!**/*.min.css"
+    - "!**/generated/**"
+    - "!**/.claude/**"
+    - "!**/.serena/**"
+    - "!**/.husky/**"
+    - "!**/assets/*.svg"
+
+  # =============================================================================
+  # 경로별 리뷰 지침 (실제 프로젝트 구조 기반)
+  # =============================================================================
+  path_instructions:
+    # -------------------------------------------------------------------------
+    # Backend - NestJS Core
+    # -------------------------------------------------------------------------
+    - path: "apps/server/src/**/*.ts"
+      instructions: |
+        NestJS 백엔드 코드를 리뷰합니다:
+        - SOLID 원칙 준수 여부
+        - Dependency Injection 패턴 올바른 사용
+        - Controller → Service 레이어 분리
+        - class-validator DTO 검증 적용
+        - 에러 핸들링 및 적절한 HTTP 예외 사용
+        - 비동기 처리 (async/await) 패턴
+        - 보안 취약점 (인젝션, 인증 우회 등)
+
+    # -------------------------------------------------------------------------
+    # AI Module - 핵심 리뷰 영역
+    # -------------------------------------------------------------------------
+    - path: "apps/server/src/ai/**/*.ts"
+      instructions: |
+        🤖 AI/LLM 관련 코드는 특별히 주의해서 리뷰합니다:
+        - 프롬프트 인젝션 공격 방지 (사용자 입력 이스케이프)
+        - API 키 노출 여부 확인 (하드코딩 금지)
+        - 토큰 사용량 최적화
+        - 에러 핸들링 및 재시도 로직
+        - 스트리밍 응답 처리 안정성
+        - Rate limiting 적용 여부
+
+    - path: "apps/server/src/ai/prompt/**/*.ts"
+      instructions: |
+        📝 프롬프트 빌더 코드 리뷰:
+        - 프롬프트 템플릿 명확성과 효율성
+        - Few-shot examples 품질
+        - 토큰 최적화 전략
+        - 다국어(한국어) 처리 적절성
+        - 프롬프트 버전 관리
+
+    - path: "apps/server/src/ai/moderation/**/*.ts"
+      instructions: |
+        🛡️ 콘텐츠 모더레이션 코드 리뷰:
+        - 한국어 필터링 정확성 (korean-filter.ts)
+        - 유해 콘텐츠 차단 로직
+        - False positive/negative 고려
+        - 모더레이션 API 에러 처리
+
+    - path: "apps/server/src/ai/errors/**/*.ts"
+      instructions: |
+        AI 에러 처리 코드 리뷰:
+        - 커스텀 예외 클래스 설계
+        - 에러 메시지 명확성
+        - 사용자 친화적 에러 응답
+        - 로깅 및 모니터링 연계
+
+    # -------------------------------------------------------------------------
+    # Auth Module
+    # -------------------------------------------------------------------------
+    - path: "apps/server/src/auth/**/*.ts"
+      instructions: |
+        🔐 인증/인가 코드는 보안에 집중하여 리뷰:
+        - JWT 토큰 만료 시간 적절성
+        - bcrypt 솔트 라운드 (12 권장)
+        - Guard 및 Decorator 적용
+        - Refresh token 처리 (해당 시)
+        - CORS 설정 검토
+        - 민감 정보 로깅 금지
+
+    - path: "apps/server/src/auth/strategies/**/*.ts"
+      instructions: |
+        Passport JWT Strategy 리뷰:
+        - 토큰 검증 로직 정확성
+        - 사용자 조회 최적화
+        - 에러 핸들링
+
+    - path: "apps/server/src/auth/guards/**/*.ts"
+      instructions: |
+        NestJS Guard 리뷰:
+        - 인증/인가 로직 분리
+        - 예외 처리 적절성
+
+    - path: "apps/server/src/auth/dto/**/*.ts"
+      instructions: |
+        인증 DTO 리뷰:
+        - 이메일, 비밀번호 검증 규칙
+        - class-validator 데코레이터 적용
+        - 보안에 민감한 필드 처리
+
+    # -------------------------------------------------------------------------
+    # Writer Module
+    # -------------------------------------------------------------------------
+    - path: "apps/server/src/writer/**/*.ts"
+      instructions: |
+        ✍️ 작가 페르소나 모듈 리뷰:
+        - systemPrompt 필드 보안 (사용자 입력 검증)
+        - CRUD 작업 권한 검증 (소유자 확인)
+        - isPublic 플래그 처리
+        - 이미지 URL 검증
+        - 장르(genre) 배열 처리
+
+    - path: "apps/server/src/writer/dto/**/*.ts"
+      instructions: |
+        작가 DTO 리뷰:
+        - systemPrompt 길이 제한
+        - genre 배열 검증
+        - Optional 필드 처리
+
+    # -------------------------------------------------------------------------
+    # Story Module
+    # -------------------------------------------------------------------------
+    - path: "apps/server/src/story/**/*.ts"
+      instructions: |
+        📖 소설 생성/관리 모듈 리뷰:
+        - AI 생성 콘텐츠 저장 로직
+        - wordCount, readTime 계산 정확성
+        - 태그(tags) 처리
+        - 권한 검증 (소유자/공개 여부)
+        - 페이지네이션 최적화
+
+    - path: "apps/server/src/story/dto/**/*.ts"
+      instructions: |
+        소설 DTO 리뷰:
+        - GenerateStoryDto 입력 검증
+        - 태그 배열 제한
+        - 필터 DTO 쿼리 파라미터
+
+    # -------------------------------------------------------------------------
+    # Prisma & Database
+    # -------------------------------------------------------------------------
+    - path: "apps/server/prisma/schema.prisma"
+      instructions: |
+        🗄️ Prisma 스키마 리뷰:
+        - User, Writer, Story, Bookmark 모델 관계 적절성
+        - 인덱스 설정 (@@index) - 쿼리 성능
+        - Cascade 삭제 규칙 (onDelete: Cascade)
+        - 필드 타입 (@db.Text 등)
+        - @unique, @default 데코레이터
+
+    - path: "apps/server/prisma/migrations/**"
+      instructions: |
+        마이그레이션 리뷰:
+        - 데이터 손실 가능성 확인
+        - 롤백 가능성 고려
+        - 대용량 테이블 변경 시 성능 영향
+
+    - path: "apps/server/src/prisma/**/*.ts"
+      instructions: |
+        PrismaService 리뷰:
+        - 연결 풀링 설정
+        - 에러 핸들링
+        - 트랜잭션 처리
+
+    # -------------------------------------------------------------------------
+    # Common Utilities
+    # -------------------------------------------------------------------------
+    - path: "apps/server/src/common/**/*.ts"
+      instructions: |
+        공통 유틸리티 리뷰:
+        - @CurrentUser 데코레이터 타입 안전성
+        - JwtAuthGuard 적용 범위
+        - 재사용 가능한 설계
+
+    # -------------------------------------------------------------------------
+    # Frontend - React (Vite)
+    # -------------------------------------------------------------------------
+    - path: "apps/web/src/**/*.{ts,tsx}"
+      instructions: |
+        React 프론트엔드 코드 리뷰:
+        - React 18 best practices
+        - Hooks 규칙 준수 (의존성 배열)
+        - 불필요한 리렌더링 방지
+        - TypeScript 타입 안전성
+        - 접근성 (a11y) 고려
+
+    - path: "apps/web/src/components/**/*.tsx"
+      instructions: |
+        React 컴포넌트 리뷰:
+        - Props 타입 정의 명확성
+        - 컴포넌트 단일 책임
+        - Tailwind CSS 클래스 정리
+        - 로딩/에러 상태 처리
+
+    - path: "apps/web/src/components/ui/**/*.tsx"
+      instructions: |
+        UI 컴포넌트 (shadcn/ui 기반) 리뷰:
+        - 재사용성 및 확장성
+        - Props 인터페이스 설계
+        - 접근성 (aria 속성)
+        - 다크 테마 지원
+
+    - path: "apps/web/src/components/writer/**/*.tsx"
+      instructions: |
+        작가 관련 컴포넌트 리뷰:
+        - WriterCard, WriterForm, WriterGallery 컴포넌트
+        - 폼 검증 로직
+        - 이미지 표시 처리
+
+    - path: "apps/web/src/hooks/**/*.ts"
+      instructions: |
+        Custom Hooks 리뷰:
+        - useStoryGeneration 등 비즈니스 로직
+        - Hook 규칙 준수
+        - 의존성 배열 정확성
+        - 메모리 누수 방지 (cleanup)
+
+    - path: "apps/web/src/stores/**/*.ts"
+      instructions: |
+        Zustand 스토어 리뷰:
+        - auth.store.ts, writer.store.ts 상태 관리
+        - 상태 구조 설계
+        - 액션 명확성
+        - 불필요한 리렌더링 방지
+
+    - path: "apps/web/src/api/**/*.ts"
+      instructions: |
+        API 호출 코드 리뷰:
+        - lib/api.ts 기반 요청
+        - 에러 핸들링
+        - 타입 안전성
+
+    - path: "apps/web/src/pages/**/*.tsx"
+      instructions: |
+        페이지 컴포넌트 리뷰:
+        - LoginPage, RegisterPage 인증 페이지
+        - WritersPage, WriterDetailPage 작가 페이지
+        - GenerateStoryPage 소설 생성 페이지
+        - 라우팅 및 인증 가드
+        - 로딩/에러 상태
+
+    - path: "apps/web/src/types/**/*.ts"
+      instructions: |
+        타입 정의 리뷰:
+        - auth.ts, writer.ts 타입
+        - 백엔드 DTO와의 일관성
+        - 재사용 가능한 타입
+
+    - path: "apps/web/src/lib/**/*.ts"
+      instructions: |
+        유틸리티 라이브러리 리뷰:
+        - api.ts HTTP 클라이언트 설정
+        - utils.ts 헬퍼 함수
+        - 에러 핸들링
+
+    # -------------------------------------------------------------------------
+    # Shared Packages
+    # -------------------------------------------------------------------------
+    - path: "packages/ui/src/**/*.{ts,tsx}"
+      instructions: |
+        공유 UI 패키지 리뷰:
+        - 재사용 가능한 컴포넌트
+        - 의존성 최소화
+        - 타입 export
+
+    - path: "packages/types/src/**/*.ts"
+      instructions: |
+        공유 타입 패키지 리뷰:
+        - 프론트/백엔드 공유 타입
+        - Generic 타입 활용
+        - 문서화 (JSDoc)
+
+    - path: "packages/utils/src/**/*.ts"
+      instructions: |
+        공유 유틸리티 패키지 리뷰:
+        - 순수 함수 설계
+        - 테스트 용이성
+        - 의존성 최소화
+
+    # -------------------------------------------------------------------------
+    # Configuration & DevOps
+    # -------------------------------------------------------------------------
+    - path: "docker-compose.yml"
+      instructions: |
+        Docker Compose 리뷰:
+        - PostgreSQL 설정
+        - 볼륨 마운트
+        - 네트워크 설정
+        - 환경 변수 처리
+
+    - path: "**/*.{json,yaml,yml}"
+      instructions: |
+        설정 파일 리뷰:
+        - 민감 정보 노출 여부
+        - 환경별 설정 분리
+        - 문법 오류
+
+    - path: ".github/workflows/**"
+      instructions: |
+        GitHub Actions 워크플로우 리뷰:
+        - 보안 (secrets 사용)
+        - 캐시 활용
+        - 병렬 실행 최적화
+
+    - path: "scripts/**"
+      instructions: |
+        스크립트 파일 리뷰:
+        - 보안 취약점
+        - 에러 핸들링
+        - 이식성
+
+    # -------------------------------------------------------------------------
+    # Specs & Documentation
+    # -------------------------------------------------------------------------
+    - path: "specs/**/*.md"
+      instructions: |
+        명세 문서 리뷰:
+        - Phase별 spec, plan, tasks 일관성
+        - 요구사항 명확성
+        - 기술 설계 적절성
+
+    # -------------------------------------------------------------------------
+    # Tests
+    # -------------------------------------------------------------------------
+    - path: "**/*.{test,spec}.{ts,tsx}"
+      instructions: |
+        테스트 코드 리뷰:
+        - 테스트 커버리지 충분성
+        - 테스트 케이스 명확한 설명
+        - 엣지 케이스 포함 여부
+        - Mock 적절한 사용
+        - 테스트 격리
+
+  abort_on_close: true
+  disable_cache: false
+
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    ignore_title_keywords:
+      - "WIP"
+      - "DO NOT MERGE"
+      - "DRAFT"
+      - "[skip ci]"
+      - "[skip review]"
+    labels: []
+    drafts: false
+    base_branches:
+      - main
+      - develop
+
+  # =============================================================================
+  # 코드 생성 옵션
+  # =============================================================================
+  finishing_touches:
+    docstrings:
+      enabled: true
+    unit_tests:
+      enabled: true
+
+  # =============================================================================
+  # 정적 분석 도구 (프로젝트 설정 기반)
+  # =============================================================================
+  tools:
+    eslint:
+      enabled: true
+    prismaLint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    markdownlint:
+      enabled: true
+    yamllint:
+      enabled: true
+    hadolint:
+      enabled: true
+    actionlint:
+      enabled: true
+    shellcheck:
+      enabled: true
+    biome:
+      enabled: false  # ESLint 사용 (.eslintrc.json)
+    ast-grep:
+      essential_rules: true
+      rule_dirs: []
+      packages: []
+
+# =============================================================================
+# Chat 설정
+# =============================================================================
+chat:
+  auto_reply: true
+  integrations:
+    jira:
+      usage: auto
+    linear:
+      usage: auto
+
+# =============================================================================
+# Knowledge Base 설정
+# =============================================================================
+knowledge_base:
+  opt_out: false
+  web_search:
+    enabled: true
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "CLAUDE.md"
+      - "README.md"
+      - ".eslintrc.json"
+      - "tsconfig.json"
+      - "specs/**/*.md"
+  learnings:
+    scope: auto
+  issues:
+    scope: auto
+  pull_requests:
+    scope: auto
+
+# =============================================================================
+# 코드 생성 설정
+# =============================================================================
+code_generation:
+  docstrings:
+    language: "ko-KR"
+    path_instructions:
+      - path: "apps/server/**/*.ts"
+        instructions: |
+          JSDoc 형식으로 작성
+          - @description: 함수/클래스 설명 (한국어)
+          - @param: 파라미터 설명
+          - @returns: 반환값 설명
+          - @throws: 예외 상황 설명
+      - path: "apps/web/**/*.tsx"
+        instructions: |
+          React 컴포넌트용 JSDoc 형식
+          - 컴포넌트 설명
+          - Props 설명
+  unit_tests:
+    path_instructions:
+      - path: "apps/server/**/*.ts"
+        instructions: |
+          Jest + NestJS Testing 패턴 사용
+          - describe/it 블록 구조
+          - AAA 패턴 (Arrange, Act, Assert)
+          - Mock 적절히 활용
+      - path: "apps/web/**/*.tsx"
+        instructions: |
+          Vitest + React Testing Library 패턴 사용
+          - 사용자 관점 테스트
+          - 접근성 쿼리 우선 사용
