@@ -20,10 +20,53 @@ export function GenerateStoryPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+
+    const fetchWriters = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        const response = await fetch(`${apiUrl}/writers?isPublic=true`, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch writers');
+        }
+
+        const data = await response.json();
+
+        // Only update state if not aborted
+        if (!controller.signal.aborted) {
+          setWriters(data.writers || []);
+          setIsLoading(false);
+        }
+      } catch (err) {
+        // Ignore abort errors (intentional cleanup)
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
+
+        // Only update state if not aborted
+        if (!controller.signal.aborted) {
+          console.error('Error fetching writers:', err);
+          setError('작가 목록을 불러올 수 없습니다.');
+          setIsLoading(false);
+        }
+      }
+    };
+
     fetchWriters();
+
+    // Cleanup: abort fetch on unmount
+    return () => {
+      controller.abort();
+    };
   }, []);
 
-  const fetchWriters = async () => {
+  const refetchWriters = async () => {
+    setIsLoading(true);
+    setError(null);
+
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const response = await fetch(`${apiUrl}/writers?isPublic=true`);
@@ -59,7 +102,7 @@ export function GenerateStoryPage() {
         <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 max-w-md">
           <p className="text-destructive">❌ {error}</p>
           <button
-            onClick={fetchWriters}
+            onClick={refetchWriters}
             className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90"
           >
             다시 시도
