@@ -11,22 +11,35 @@ import {
   HttpStatus,
   Sse,
   MessageEvent,
+  UseGuards,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { StoryService } from './story.service';
 import {
   GenerateStoryDto,
+  GenerateStoryQueryDto,
   StoryFiltersDto,
   StoryDto,
   PaginatedStoriesDto,
 } from './dto';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { AuthUser } from '../auth/types/user.type';
 
 interface RequestWithUser extends Request {
-  user?: {
-    id: string;
-    email: string;
-  };
+  user?: AuthUser;
+}
+
+/**
+ * Extract authenticated user ID from request
+ * Throws UnauthorizedException if user is not authenticated
+ */
+function getUserIdOrThrow(req: RequestWithUser): string {
+  if (!req.user?.id) {
+    throw new UnauthorizedException('Authentication required');
+  }
+  return req.user.id;
 }
 
 /**
@@ -44,7 +57,7 @@ interface RequestWithUser extends Request {
  * Rate Limiting: Generate endpoint limited to 10 stories/day (implemented in guard)
  */
 @Controller('stories')
-// @UseGuards(JwtAuthGuard) // TODO: Uncomment when auth is implemented
+@UseGuards(JwtAuthGuard)
 export class StoryController {
   constructor(private readonly storyService: StoryService) {}
 
@@ -62,9 +75,7 @@ export class StoryController {
     @Body() dto: GenerateStoryDto,
     @Req() req: RequestWithUser,
   ): Promise<StoryDto> {
-    // TODO: Get userId from JWT token (req.user.id)
-    const userId = req.user?.id || 'mock-user-id';
-
+    const userId = getUserIdOrThrow(req);
     return this.storyService.generateStory(dto, userId);
   }
 
@@ -79,24 +90,21 @@ export class StoryController {
    * - error: Error message if generation fails
    *
    * Note: SSE requires GET (EventSource doesn't support POST)
+   * Validation: Uses GenerateStoryQueryDto with Transform for tags parsing
    *
    * Success Criteria: First token < 2s, total < 30s
    */
   @Sse('generate/stream')
   generateStoryStream(
-    @Query('writerId') writerId: string,
-    @Query('tags') tagsParam: string,
+    @Query() queryDto: GenerateStoryQueryDto,
     @Req() req: RequestWithUser,
   ): Observable<MessageEvent> {
-    const userId = req.user?.id || 'mock-user-id';
+    const userId = getUserIdOrThrow(req);
 
-    // Parse tags from comma-separated string
-    const tags = tagsParam ? tagsParam.split(',').filter(Boolean) : [];
-
-    // Create DTO
+    // DTO is already validated and transformed by ValidationPipe
     const dto: GenerateStoryDto = {
-      writerId,
-      tags,
+      writerId: queryDto.writerId,
+      tags: queryDto.tags,
     };
 
     return this.storyService.generateStoryStream(dto, userId);
@@ -114,8 +122,7 @@ export class StoryController {
     @Query() filters: StoryFiltersDto,
     @Req() req: RequestWithUser,
   ): Promise<PaginatedStoriesDto> {
-    const userId = req.user?.id || 'mock-user-id';
-
+    const userId = getUserIdOrThrow(req);
     return this.storyService.getUserStories(userId, filters);
   }
 
@@ -131,8 +138,7 @@ export class StoryController {
     @Param('id') id: string,
     @Req() req: RequestWithUser,
   ): Promise<StoryDto> {
-    const userId = req.user?.id || 'mock-user-id';
-
+    const userId = getUserIdOrThrow(req);
     return this.storyService.getStoryById(id, userId);
   }
 
@@ -149,8 +155,7 @@ export class StoryController {
     @Param('id') id: string,
     @Req() req: RequestWithUser,
   ): Promise<void> {
-    const userId = req.user?.id || 'mock-user-id';
-
+    const userId = getUserIdOrThrow(req);
     await this.storyService.deleteStory(id, userId);
   }
 }

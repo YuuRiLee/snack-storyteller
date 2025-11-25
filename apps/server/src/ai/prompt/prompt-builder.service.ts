@@ -95,6 +95,16 @@ export class PromptBuilderService {
     requestTags: string[],
     count: number,
   ): FewShotExample[] {
+    // Guard: Check if examples array is empty
+    if (this.examples.length === 0) {
+      this.logger.error({
+        event: 'no_seed_examples',
+        requestTags,
+        message: 'SEED_EXAMPLES is empty - cannot select few-shot examples',
+      });
+      return [];
+    }
+
     // Calculate similarity scores
     const scoredExamples = this.examples.map((example) => ({
       example,
@@ -104,8 +114,9 @@ export class PromptBuilderService {
     // Sort by score descending
     scoredExamples.sort((a, b) => b.score - a.score);
 
-    // Check if we have any matches
-    const hasMatches = scoredExamples[0].score > 0;
+    // Check if we have any matches (safely check array length first)
+    const hasMatches =
+      scoredExamples.length > 0 && scoredExamples[0].score > 0;
 
     if (!hasMatches) {
       // No tag matches - return diverse fallback set
