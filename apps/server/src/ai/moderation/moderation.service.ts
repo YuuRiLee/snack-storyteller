@@ -53,9 +53,10 @@ export class ModerationService {
 
     // Stage 2: OpenAI Moderation API
     try {
-      const response = await this.openai.moderations.create({
-        input: content,
-      });
+      const response = await this.openai.moderations.create(
+        { input: content },
+        { timeout: 5000 }, // 5 second timeout to fail fast
+      );
 
       const result = response.results[0];
 

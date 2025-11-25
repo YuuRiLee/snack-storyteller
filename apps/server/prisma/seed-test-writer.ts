@@ -1,9 +1,17 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
+// Test credentials - for development/testing only
+const TEST_USER_PASSWORD = 'Test1234!';
+const BCRYPT_ROUNDS = 10;
+
 async function main() {
   console.log('🌱 Seeding test data...');
+
+  // Hash the test password
+  const hashedPassword = await bcrypt.hash(TEST_USER_PASSWORD, BCRYPT_ROUNDS);
 
   // First create a test user (required for Writer.userId foreign key)
   const testUser = await prisma.user.upsert({
@@ -11,12 +19,18 @@ async function main() {
     update: {},
     create: {
       email: 'test@test.com',
-      password: 'hashed-password', // In production, use bcrypt
+      password: hashedPassword,
       name: '테스트 사용자',
     },
   });
 
-  console.log('✅ Test user created:', testUser);
+  // Log only safe fields (exclude password)
+  console.log('✅ Test user created:', {
+    id: testUser.id,
+    email: testUser.email,
+    name: testUser.name,
+  });
+  console.log('   📝 Test login: test@test.com / Test1234!');
 
   // Now create test writer with userId
   const testWriter = await prisma.writer.upsert({

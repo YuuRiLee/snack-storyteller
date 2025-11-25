@@ -5,6 +5,13 @@
 
 set -e
 
+# Detect repository root (portable path resolution)
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+    echo "❌ Error: Could not determine repository root."
+    echo "   Make sure you're running this script from within the git repository."
+    exit 1
+}
+
 API_URL="http://localhost:3001"
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -106,7 +113,7 @@ fi
 
 # Test 7: TypeScript Compilation
 echo -n "7. TypeScript type-check... "
-cd /Users/yuri/Workspace/snack-storyteller
+cd "${REPO_ROOT}"
 TYPE_CHECK=$(pnpm type-check 2>&1)
 if echo "$TYPE_CHECK" | grep -q "Done"; then
     echo -e "${GREEN}✅ PASS${NC}"
@@ -118,7 +125,7 @@ fi
 
 # Test 8: Frontend Build
 echo -n "8. Frontend build test... "
-cd /Users/yuri/Workspace/snack-storyteller/apps/web
+cd "${REPO_ROOT}/apps/web"
 BUILD=$(pnpm build 2>&1)
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✅ PASS${NC}"
@@ -130,7 +137,7 @@ fi
 
 # Test 9: Backend Build
 echo -n "9. Backend build test... "
-cd /Users/yuri/Workspace/snack-storyteller/apps/server
+cd "${REPO_ROOT}/apps/server"
 BUILD=$(pnpm build 2>&1)
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✅ PASS${NC}"
