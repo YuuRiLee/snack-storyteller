@@ -101,10 +101,10 @@ export class BookmarkService {
   }
 
   /**
-   * Toggle bookmark
+   * Toggle bookmark (atomic transaction)
    *
    * Creates bookmark if not exists, deletes if exists.
-   * Returns new bookmark status.
+   * Uses Prisma transaction to prevent race conditions.
    *
    * @param storyId - Story to toggle bookmark
    * @param userId - User toggling bookmark
@@ -114,22 +114,57 @@ export class BookmarkService {
     storyId: string,
     userId: string,
   ): Promise<{ isBookmarked: boolean; bookmark?: BookmarkDto }> {
-    // Check if bookmark exists
-    const existing = await this.prisma.bookmark.findUnique({
-      where: {
-        userId_storyId: { userId, storyId },
-      },
-    });
+    return this.prisma.$transaction(async (tx) => {
+      // Check if bookmark exists within transaction
+      const existing = await tx.bookmark.findUnique({
+        where: {
+          userId_storyId: { userId, storyId },
+        },
+      });
 
-    if (existing) {
-      // Delete existing bookmark
-      await this.deleteBookmark(storyId, userId);
-      return { isBookmarked: false };
-    } else {
-      // Create new bookmark
-      const bookmark = await this.createBookmark(storyId, userId);
-      return { isBookmarked: true, bookmark };
-    }
+      if (existing) {
+        // Delete existing bookmark
+        await tx.bookmark.delete({
+          where: {
+            userId_storyId: { userId, storyId },
+          },
+        });
+
+        this.logger.log({
+          event: 'bookmark_toggled_off',
+          userId,
+          storyId,
+        });
+
+        return { isBookmarked: false };
+      } else {
+        // Verify story exists before creating bookmark
+        const story = await tx.story.findUnique({
+          where: { id: storyId },
+        });
+
+        if (!story) {
+          throw new NotFoundException(`Story ${storyId} not found`);
+        }
+
+        // Create new bookmark
+        const bookmark = await tx.bookmark.create({
+          data: {
+            userId,
+            storyId,
+          },
+        });
+
+        this.logger.log({
+          event: 'bookmark_toggled_on',
+          userId,
+          storyId,
+          bookmarkId: bookmark.id,
+        });
+
+        return { isBookmarked: true, bookmark };
+      }
+    });
   }
 
   /**
