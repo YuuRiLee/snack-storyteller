@@ -11,6 +11,7 @@ import {
   MyWritersPage,
   LibraryPage,
   StoryDetailPage,
+  GenerateStoryPage,
 } from './pages';
 
 const queryClient = new QueryClient({
@@ -81,7 +82,7 @@ function App() {
               {/* Stories / Library */}
               <Route path="/library" element={<LibraryPage />} />
               <Route path="/stories/:id" element={<StoryDetailPage />} />
-
+              <Route path="/stories/generate" element={<GenerateStoryPage />} />
               {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

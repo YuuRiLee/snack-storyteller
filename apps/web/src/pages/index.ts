@@ -7,3 +7,4 @@ export * from './WriterDetailPage';
 export * from './MyWritersPage';
 export * from './LibraryPage';
 export * from './StoryDetailPage';
+export * from './GenerateStoryPage';
