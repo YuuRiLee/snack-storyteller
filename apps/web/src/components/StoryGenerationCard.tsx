@@ -65,9 +65,7 @@ export function StoryGenerationCard({ writers }: StoryGenerationCardProps) {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-foreground mb-2">
-          AI 단편 소설 생성
-        </h1>
+        <h1 className="text-4xl font-bold text-foreground mb-2">AI 단편 소설 생성</h1>
         <p className="text-muted-foreground">
           작가를 선택하고 태그를 골라 나만의 소설을 만들어보세요
         </p>
@@ -78,9 +76,7 @@ export function StoryGenerationCard({ writers }: StoryGenerationCardProps) {
         <div className="bg-card border border-border rounded-lg p-6 space-y-6">
           {/* Writer Selection */}
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              작가 선택
-            </label>
+            <label className="block text-sm font-medium text-foreground mb-2">작가 선택</label>
             <select
               value={selectedWriter}
               onChange={(e) => setSelectedWriter(e.target.value)}
@@ -127,18 +123,14 @@ export function StoryGenerationCard({ writers }: StoryGenerationCardProps) {
                 );
               })}
             </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              선택됨: {selectedTags.length}/3
-            </p>
+            <p className="text-sm text-muted-foreground mt-2">선택됨: {selectedTags.length}/3</p>
           </div>
 
           {/* Generate Button */}
           <div className="flex gap-3">
             <button
               onClick={handleGenerate}
-              disabled={
-                isGenerating || !selectedWriter || selectedTags.length === 0
-              }
+              disabled={isGenerating || !selectedWriter || selectedTags.length === 0}
               className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
             >
               {isGenerating ? '⏳ 생성 중...' : '🚀 소설 생성하기'}
@@ -157,9 +149,7 @@ export function StoryGenerationCard({ writers }: StoryGenerationCardProps) {
           {/* Status Messages */}
           {retryAttempt !== null && (
             <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
-              <p className="text-yellow-500 text-sm">
-                🔄 재시도 중... ({retryAttempt}/3)
-              </p>
+              <p className="text-yellow-500 text-sm">🔄 재시도 중... ({retryAttempt}/3)</p>
             </div>
           )}
 
@@ -175,12 +165,8 @@ export function StoryGenerationCard({ writers }: StoryGenerationCardProps) {
       {currentContent && !isComplete && (
         <div className="bg-card border border-border rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-foreground">
-              생성 중...
-            </h2>
-            <span className="text-sm text-muted-foreground">
-              {currentContent.length} 글자
-            </span>
+            <h2 className="text-xl font-semibold text-foreground">생성 중...</h2>
+            <span className="text-sm text-muted-foreground">{currentContent.length} 글자</span>
           </div>
           <div className="prose prose-invert max-w-none">
             <div className="whitespace-pre-wrap font-serif text-lg leading-relaxed text-foreground">
@@ -198,15 +184,10 @@ export function StoryGenerationCard({ writers }: StoryGenerationCardProps) {
         <div className="bg-card border-2 border-primary rounded-lg p-8 space-y-6">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-3xl font-bold text-foreground mb-2">
-                {story.title}
-              </h2>
+              <h2 className="text-3xl font-bold text-foreground mb-2">{story.title}</h2>
               <div className="flex gap-4 text-sm text-muted-foreground">
                 <span>📖 {story.wordCount} 단어</span>
-                <span>
-                  ✍️{' '}
-                  {selectedWriterData?.name || story.writer?.name || '작가'}
-                </span>
+                <span>✍️ {selectedWriterData?.name || story.writer?.name || '작가'}</span>
               </div>
               <div className="flex gap-2 mt-3">
                 {selectedTags.map((tag) => (

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StoryGenerationCard } from '../components/StoryGenerationCard';
+import { api } from '../lib/api';
 
 interface Writer {
   id: string;
@@ -24,20 +25,14 @@ export function GenerateStoryPage() {
 
     const fetchWriters = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-        const response = await fetch(`${apiUrl}/writers?isPublic=true`, {
+        const response = await api.get(`/writers?isPublic=true`, {
           signal: controller.signal,
         });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch writers');
-        }
-
-        const data = await response.json();
+        const { data } = response.data;
 
         // Only update state if not aborted
         if (!controller.signal.aborted) {
-          setWriters(data.writers || []);
+          setWriters(data || []);
           setIsLoading(false);
         }
       } catch (err) {
@@ -116,12 +111,8 @@ export function GenerateStoryPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="bg-muted border border-border rounded-lg p-6 max-w-md text-center">
-          <p className="text-muted-foreground mb-4">
-            사용 가능한 작가가 없습니다.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            데이터베이스에 작가를 추가해주세요.
-          </p>
+          <p className="text-muted-foreground mb-4">사용 가능한 작가가 없습니다.</p>
+          <p className="text-sm text-muted-foreground">데이터베이스에 작가를 추가해주세요.</p>
         </div>
       </div>
     );

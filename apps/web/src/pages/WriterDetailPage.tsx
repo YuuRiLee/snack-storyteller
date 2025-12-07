@@ -38,7 +38,7 @@ export function WriterDetailPage() {
 
   const handleGenerateStory = () => {
     // Navigate to story generation page (Phase 4)
-    navigate(`/generate?writerId=${id}`);
+    navigate(`/stories/generate?writerId=${id}`);
   };
 
   if (isLoading) {
