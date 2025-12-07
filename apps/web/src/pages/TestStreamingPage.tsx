@@ -26,7 +26,10 @@ export function TestStreamingPage() {
   } = useStoryGeneration();
 
   const handleGenerate = () => {
-    const tagArray = tags.split(',').map((t) => t.trim()).filter(Boolean);
+    const tagArray = tags
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
     generate(writerId, tagArray);
   };
 
@@ -35,7 +38,14 @@ export function TestStreamingPage() {
       <h1>🧪 Story Generation Streaming Test</h1>
 
       {/* Controls */}
-      <div style={{ marginBottom: '2rem', padding: '1rem', background: '#f5f5f5', borderRadius: '8px' }}>
+      <div
+        style={{
+          marginBottom: '2rem',
+          padding: '1rem',
+          background: '#f5f5f5',
+          borderRadius: '8px',
+        }}
+      >
         <div style={{ marginBottom: '1rem' }}>
           <label>
             Writer ID:
@@ -119,7 +129,14 @@ export function TestStreamingPage() {
       {/* Status */}
       <div style={{ marginBottom: '2rem' }}>
         <h2>📊 Status</h2>
-        <div style={{ fontFamily: 'monospace', background: '#f5f5f5', padding: '1rem', borderRadius: '8px' }}>
+        <div
+          style={{
+            fontFamily: 'monospace',
+            background: '#f5f5f5',
+            padding: '1rem',
+            borderRadius: '8px',
+          }}
+        >
           <div>isGenerating: {isGenerating ? '✅ true' : '❌ false'}</div>
           <div>isComplete: {isComplete ? '✅ true' : '❌ false'}</div>
           <div>hasError: {hasError ? '❌ true' : '✅ false'}</div>
@@ -188,10 +205,14 @@ export function TestStreamingPage() {
       )}
 
       {/* Instructions */}
-      <div style={{ marginTop: '3rem', padding: '1rem', background: '#e9ecef', borderRadius: '8px' }}>
+      <div
+        style={{ marginTop: '3rem', padding: '1rem', background: '#e9ecef', borderRadius: '8px' }}
+      >
         <h3>📖 Instructions</h3>
         <ol>
-          <li>Make sure backend server is running: <code>pnpm dev</code> in <code>apps/server</code></li>
+          <li>
+            Make sure backend server is running: <code>pnpm dev</code> in <code>apps/server</code>
+          </li>
           <li>Ensure you have a Writer in the database with the ID you enter</li>
           <li>Enter writer ID and tags, then click "Generate Story"</li>
           <li>Watch the streaming content appear in real-time</li>
@@ -200,8 +221,10 @@ export function TestStreamingPage() {
         </ol>
 
         <h4>Test Writer Creation (via Prisma Studio or API):</h4>
-        <pre style={{ background: 'white', padding: '1rem', borderRadius: '4px', overflow: 'auto' }}>
-{`// In Prisma Studio or via API:
+        <pre
+          style={{ background: 'white', padding: '1rem', borderRadius: '4px', overflow: 'auto' }}
+        >
+          {`// In Prisma Studio or via API:
 {
   "id": "test-writer-id",
   "name": "테스트 작가",

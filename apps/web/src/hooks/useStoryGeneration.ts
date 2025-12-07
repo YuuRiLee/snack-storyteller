@@ -1,15 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 /**
- * Story Generation Event Types
- */
-type StoryEvent =
-  | { type: 'token'; data: { token: string } }
-  | { type: 'retry'; data: { reason: string; attempt: number; maxRetries: number } }
-  | { type: 'done'; data: { id: string; title: string; content: string; wordCount: number } }
-  | { type: 'error'; data: { message: string } };
-
-/**
  * Hook State
  */
 interface UseStoryGenerationState {
@@ -80,16 +71,16 @@ export function useStoryGeneration(): UseStoryGenerationState {
   // Result
   const [story, setStory] = useState<UseStoryGenerationState['story']>(null);
 
-  // EventSource ref for cleanup
-  const eventSourceRef = useRef<EventSource | null>(null);
+  // AbortController ref for cleanup
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   /**
    * Cancel generation
    */
   const cancel = useCallback(() => {
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-      eventSourceRef.current = null;
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
     }
     setIsGenerating(false);
   }, []);
@@ -112,7 +103,7 @@ export function useStoryGeneration(): UseStoryGenerationState {
    * Start generation
    */
   const generate = useCallback(
-    (writerId: string, tags: string[]) => {
+    async (writerId: string, tags: string[]) => {
       // Reset previous state
       reset();
 
@@ -123,70 +114,131 @@ export function useStoryGeneration(): UseStoryGenerationState {
         return;
       }
 
-      // Create EventSource
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-      const url = `${apiUrl}/stories/generate/stream`;
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        setHasError(true);
+        setErrorMessage('Please login to generate a story');
+        return;
+      }
 
-      // Note: EventSource doesn't support POST with body
-      // We'll need to send params as query string or use different approach
-      const params = new URLSearchParams({
-        writerId,
-        tags: tags.join(','),
-      });
-
-      const eventSource = new EventSource(`${url}?${params}`);
-      eventSourceRef.current = eventSource;
+      // Create AbortController for cancellation
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
 
       setIsGenerating(true);
 
-      // Event handlers
-      eventSource.onmessage = (event) => {
-        try {
-          const parsed: StoryEvent = JSON.parse(event.data);
+      try {
+        // Use fetch with Authorization header (EventSource doesn't support custom headers)
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        const params = new URLSearchParams({
+          writerId,
+          tags: tags.join(','),
+        });
 
-          switch (parsed.type) {
-            case 'token':
-              setCurrentContent((prev) => prev + parsed.data.token);
-              break;
+        const response = await fetch(`${apiUrl}/stories/generate/stream?${params}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'text/event-stream',
+          },
+          signal: abortController.signal,
+        });
 
-            case 'retry':
-              setRetryAttempt(parsed.data.attempt);
-              setRetryReason(parsed.data.reason);
-              // Clear content for retry
-              setCurrentContent('');
-              break;
-
-            case 'done':
-              setStory(parsed.data);
-              setCurrentContent(parsed.data.content);
-              setIsComplete(true);
-              setIsGenerating(false);
-              eventSource.close();
-              break;
-
-            case 'error':
-              setHasError(true);
-              setErrorMessage(parsed.data.message);
-              setIsGenerating(false);
-              eventSource.close();
-              break;
-          }
-        } catch (error) {
-          console.error('Failed to parse SSE message:', error);
-          setHasError(true);
-          setErrorMessage('Failed to parse server response');
-          setIsGenerating(false);
-          eventSource.close();
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || `HTTP ${response.status}`);
         }
-      };
 
-      eventSource.onerror = (error) => {
-        console.error('EventSource error:', error);
+        const reader = response.body?.getReader();
+        if (!reader) {
+          throw new Error('Response body is not readable');
+        }
+
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        // SSE event state (event can span multiple lines)
+        let currentEventType = '';
+        let currentEventData = '';
+
+        // Process SSE stream
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          buffer += decoder.decode(value, { stream: true });
+
+          // Parse SSE events
+          // Format:
+          //   event: token
+          //   id: 84
+          //   data: {"token":"시"}
+          //   (empty line = event complete)
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+          for (const line of lines) {
+            if (line.startsWith('event: ')) {
+              currentEventType = line.slice(7).trim();
+            } else if (line.startsWith('data: ')) {
+              currentEventData = line.slice(6).trim();
+            } else if (line === '' && currentEventData) {
+              // Empty line = event complete, process it
+              try {
+                const parsed = JSON.parse(currentEventData);
+
+                switch (currentEventType) {
+                  case 'token':
+                    if (parsed.token) {
+                      setCurrentContent((prev) => prev + parsed.token);
+                    }
+                    break;
+
+                  case 'retry':
+                    setRetryAttempt(parsed.attempt);
+                    setRetryReason(parsed.reason);
+                    // Clear content for retry
+                    setCurrentContent('');
+                    break;
+
+                  case 'done':
+                    setStory(parsed);
+                    setCurrentContent(parsed.content);
+                    setIsComplete(true);
+                    setIsGenerating(false);
+                    return;
+
+                  case 'error':
+                    setHasError(true);
+                    setErrorMessage(parsed.message);
+                    setIsGenerating(false);
+                    return;
+                }
+              } catch (parseError) {
+                console.error('Failed to parse SSE message:', parseError, currentEventData);
+              }
+
+              // Reset for next event
+              currentEventType = '';
+              currentEventData = '';
+            }
+          }
+        }
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          // User cancelled - don't show error
+          return;
+        }
+
+        console.error('SSE stream error:', error);
         setHasError(true);
-        setErrorMessage('Connection to server lost');
+        setErrorMessage(error instanceof Error ? error.message : 'Connection to server lost');
         setIsGenerating(false);
-        eventSource.close();
-      };
+      }
     },
     [reset],
   );
@@ -196,8 +248,8 @@ export function useStoryGeneration(): UseStoryGenerationState {
    */
   useEffect(() => {
     return () => {
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
       }
     };
   }, []);
