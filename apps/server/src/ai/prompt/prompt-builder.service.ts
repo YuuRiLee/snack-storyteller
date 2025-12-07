@@ -115,8 +115,7 @@ export class PromptBuilderService {
     scoredExamples.sort((a, b) => b.score - a.score);
 
     // Check if we have any matches (safely check array length first)
-    const hasMatches =
-      scoredExamples.length > 0 && scoredExamples[0].score > 0;
+    const hasMatches = scoredExamples.length > 0 && scoredExamples[0].score > 0;
 
     if (!hasMatches) {
       // No tag matches - return diverse fallback set

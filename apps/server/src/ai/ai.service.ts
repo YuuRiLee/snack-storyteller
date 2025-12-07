@@ -85,7 +85,7 @@ export class AIService {
 
       // Create streaming completion (official OpenAI pattern from Context7)
       const stream = await this.openai.chat.completions.create({
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemMessage },
           { role: 'user', content: userMessage },
