@@ -21,7 +21,7 @@ export function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <BookOpen className="h-6 w-6 text-primary" />
-            <span className="text-lg font-bold">Snack Storyteller</span>
+            <span className="text-lg font-bold">스낵 스토리텔러</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -30,7 +30,7 @@ export function Navbar() {
               to="/writers"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              Writers
+              작가
             </Link>
 
             {isAuthenticated ? (
@@ -39,13 +39,13 @@ export function Navbar() {
                   to="/my-writers"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  My Writers
+                  내 작가
                 </Link>
                 <Link
                   to="/library"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Library
+                  라이브러리
                 </Link>
 
                 <div className="flex items-center gap-3">
@@ -55,7 +55,7 @@ export function Navbar() {
                   </div>
                   <Button variant="outline" size="sm" onClick={handleLogout}>
                     <LogOut className="h-4 w-4 mr-1" />
-                    Logout
+                    로그아웃
                   </Button>
                 </div>
               </>
@@ -63,11 +63,11 @@ export function Navbar() {
               <div className="flex items-center gap-2">
                 <Link to="/login">
                   <Button variant="ghost" size="sm">
-                    Sign In
+                    로그인
                   </Button>
                 </Link>
                 <Link to="/register">
-                  <Button size="sm">Sign Up</Button>
+                  <Button size="sm">회원가입</Button>
                 </Link>
               </div>
             )}
@@ -87,7 +87,7 @@ export function Navbar() {
               className="block px-2 py-2 text-muted-foreground hover:text-foreground"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Writers
+              작가
             </Link>
 
             {isAuthenticated ? (
@@ -97,14 +97,14 @@ export function Navbar() {
                   className="block px-2 py-2 text-muted-foreground hover:text-foreground"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  My Writers
+                  내 작가
                 </Link>
                 <Link
                   to="/library"
                   className="block px-2 py-2 text-muted-foreground hover:text-foreground"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Library
+                  라이브러리
                 </Link>
 
                 <div className="px-2 pt-2 flex items-center justify-between">
@@ -121,7 +121,7 @@ export function Navbar() {
                     }}
                   >
                     <LogOut className="h-4 w-4 mr-1" />
-                    Logout
+                    로그아웃
                   </Button>
                 </div>
               </>
@@ -133,12 +133,12 @@ export function Navbar() {
                     className="w-full"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Sign In
+                    로그인
                   </Button>
                 </Link>
                 <Link to="/register" className="flex-1">
                   <Button className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
-                    Sign Up
+                    회원가입
                   </Button>
                 </Link>
               </div>

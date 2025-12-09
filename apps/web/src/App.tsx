@@ -27,31 +27,28 @@ function HomePage() {
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="text-center space-y-6 max-w-2xl mx-auto">
-        <h1 className="text-4xl md:text-5xl font-bold text-foreground">Snack Storyteller</h1>
-        <p className="text-xl text-muted-foreground">AI-Powered Short Story Generation Platform</p>
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground">스낵 스토리텔러</h1>
+        <p className="text-xl text-muted-foreground">AI 기반 단편 소설 생성 플랫폼</p>
         <p className="text-muted-foreground">
-          Create unique AI writer personas and generate engaging short stories in your preferred
-          style and genre.
+          나만의 AI 작가를 만들고, 원하는 스타일과 장르로 매력적인 단편 소설을 생성해보세요.
         </p>
 
         <div className="flex gap-4 justify-center mt-8 flex-wrap">
           <div className="px-6 py-4 bg-primary/10 rounded-lg">
-            <p className="text-sm text-muted-foreground">Writers</p>
-            <p className="text-2xl font-bold text-primary">AI Personas</p>
+            <p className="text-sm text-muted-foreground">작가</p>
+            <p className="text-2xl font-bold text-primary">AI 페르소나</p>
           </div>
           <div className="px-6 py-4 bg-primary/10 rounded-lg">
-            <p className="text-sm text-muted-foreground">Stories</p>
-            <p className="text-2xl font-bold text-primary">1,500+ Words</p>
+            <p className="text-sm text-muted-foreground">소설</p>
+            <p className="text-2xl font-bold text-primary">1,500자 이상</p>
           </div>
           <div className="px-6 py-4 bg-primary/10 rounded-lg">
-            <p className="text-sm text-muted-foreground">Generation</p>
-            <p className="text-2xl font-bold text-primary">30 Seconds</p>
+            <p className="text-sm text-muted-foreground">생성 시간</p>
+            <p className="text-2xl font-bold text-primary">30초</p>
           </div>
         </div>
 
-        <p className="text-sm text-muted-foreground mt-8">
-          Phase 3: Writer Management System Complete
-        </p>
+        <p className="text-sm text-muted-foreground mt-8">지금 바로 시작해보세요!</p>
       </div>
     </div>
   );
