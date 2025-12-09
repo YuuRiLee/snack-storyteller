@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStoryGeneration } from '../hooks/useStoryGeneration';
 
 interface Writer {
@@ -60,6 +60,20 @@ export function StoryGenerationCard({ writers }: StoryGenerationCardProps) {
   };
 
   const selectedWriterData = writers.find((w) => w.id === selectedWriter);
+
+  // 생성 중 페이지 이탈 경고
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isGenerating) {
+        e.preventDefault();
+        e.returnValue = '소설 생성이 진행 중입니다. 페이지를 나가시겠습니까?';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isGenerating]);
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -187,7 +201,7 @@ export function StoryGenerationCard({ writers }: StoryGenerationCardProps) {
               <h2 className="text-3xl font-bold text-foreground mb-2">{story.title}</h2>
               <div className="flex gap-4 text-sm text-muted-foreground">
                 <span>📖 {story.wordCount} 단어</span>
-                <span>✍️ {selectedWriterData?.name || story.writer?.name || '작가'}</span>
+                <span>✍️ {selectedWriterData?.name || '작가'}</span>
               </div>
               <div className="flex gap-2 mt-3">
                 {selectedTags.map((tag) => (
@@ -214,15 +228,6 @@ export function StoryGenerationCard({ writers }: StoryGenerationCardProps) {
                 {story.content}
               </div>
             </div>
-          </div>
-
-          <div className="flex gap-3 pt-6 border-t border-border">
-            <button className="flex-1 px-6 py-3 bg-muted text-muted-foreground rounded-lg font-medium hover:bg-muted/80 transition-colors">
-              💾 저장하기
-            </button>
-            <button className="flex-1 px-6 py-3 bg-muted text-muted-foreground rounded-lg font-medium hover:bg-muted/80 transition-colors">
-              🔗 공유하기
-            </button>
           </div>
         </div>
       )}
