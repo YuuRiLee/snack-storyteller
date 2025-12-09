@@ -26,8 +26,8 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/10 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md border-border/50 shadow-xl backdrop-blur-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">다시 오신 것을 환영합니다</CardTitle>
           <p className="text-muted-foreground text-sm mt-1">로그인하여 작가와 소설을 관리하세요</p>
