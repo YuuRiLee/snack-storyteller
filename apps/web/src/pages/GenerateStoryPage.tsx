@@ -67,7 +67,7 @@ export function GenerateStoryPage() {
       const response = await fetch(`${apiUrl}/writers?isPublic=true`);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch writers');
+        throw new Error('작가 목록을 불러오는데 실패했습니다');
       }
 
       const data = await response.json();

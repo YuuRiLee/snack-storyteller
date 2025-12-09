@@ -236,7 +236,7 @@ export function useStoryGeneration(): UseStoryGenerationState {
 
         console.error('SSE stream error:', error);
         setHasError(true);
-        setErrorMessage(error instanceof Error ? error.message : 'Connection to server lost');
+        setErrorMessage(error instanceof Error ? error.message : '서버 연결이 끊어졌습니다');
         setIsGenerating(false);
       }
     },

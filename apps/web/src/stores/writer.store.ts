@@ -73,7 +73,7 @@ export const useWriterStore = create<WriterState>((set) => ({
       });
     } catch (error) {
       set({
-        error: getErrorMessage(error, 'Failed to fetch writers'),
+        error: getErrorMessage(error, '작가 목록을 불러오는데 실패했습니다'),
         isLoading: false,
       });
     }
@@ -92,7 +92,7 @@ export const useWriterStore = create<WriterState>((set) => ({
       });
     } catch (error) {
       set({
-        error: getErrorMessage(error, 'Failed to fetch your writers'),
+        error: getErrorMessage(error, '내 작가 목록을 불러오는데 실패했습니다'),
         isLoading: false,
       });
     }
@@ -106,7 +106,7 @@ export const useWriterStore = create<WriterState>((set) => ({
       return response.data;
     } catch (error) {
       set({
-        error: getErrorMessage(error, 'Failed to fetch writer'),
+        error: getErrorMessage(error, '작가 정보를 불러오는데 실패했습니다'),
         isLoading: false,
       });
       throw error;
@@ -118,7 +118,7 @@ export const useWriterStore = create<WriterState>((set) => ({
       const response = await api.get<string[]>('/writers/genres');
       set({ genres: response.data });
     } catch (error) {
-      console.error('Failed to fetch genres:', error);
+      console.error('장르 목록을 불러오는데 실패했습니다:', error);
     }
   },
 
@@ -138,7 +138,7 @@ export const useWriterStore = create<WriterState>((set) => ({
       return newWriter;
     } catch (error) {
       set({
-        error: getErrorMessage(error, 'Failed to create writer'),
+        error: getErrorMessage(error, '작가 생성에 실패했습니다'),
         isLoading: false,
       });
       throw error;
@@ -162,7 +162,7 @@ export const useWriterStore = create<WriterState>((set) => ({
       return updatedWriter;
     } catch (error) {
       set({
-        error: getErrorMessage(error, 'Failed to update writer'),
+        error: getErrorMessage(error, '작가 수정에 실패했습니다'),
         isLoading: false,
       });
       throw error;
@@ -183,7 +183,7 @@ export const useWriterStore = create<WriterState>((set) => ({
       }));
     } catch (error) {
       set({
-        error: getErrorMessage(error, 'Failed to delete writer'),
+        error: getErrorMessage(error, '작가 삭제에 실패했습니다'),
         isLoading: false,
       });
       throw error;
