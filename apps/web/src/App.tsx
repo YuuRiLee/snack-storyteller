@@ -27,7 +27,7 @@ function HomePage() {
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="text-center space-y-6 max-w-2xl mx-auto">
-        <h1 className="text-4xl md:text-5xl font-bold text-foreground">스낵 스토리텔러</h1>
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground">Snack Storyteller</h1>
         <p className="text-xl text-muted-foreground">AI 기반 단편 소설 생성 플랫폼</p>
         <p className="text-muted-foreground">
           나만의 AI 작가를 만들고, 원하는 스타일과 장르로 매력적인 단편 소설을 생성해보세요.

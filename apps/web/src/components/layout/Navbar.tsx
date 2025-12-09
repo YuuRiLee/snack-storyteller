@@ -21,7 +21,7 @@ export function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <BookOpen className="h-6 w-6 text-primary" />
-            <span className="text-lg font-bold">스낵 스토리텔러</span>
+            <span className="text-lg font-bold">Snack Storyteller</span>
           </Link>
 
           {/* Desktop Navigation */}
