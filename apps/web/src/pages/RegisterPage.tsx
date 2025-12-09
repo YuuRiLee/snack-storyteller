@@ -48,8 +48,8 @@ export function RegisterPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Create Account</CardTitle>
-          <p className="text-muted-foreground text-sm mt-1">Join to create your own AI writers</p>
+          <CardTitle className="text-2xl">회원가입</CardTitle>
+          <p className="text-muted-foreground text-sm mt-1">나만의 AI 작가를 만들어보세요</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -71,51 +71,51 @@ export function RegisterPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">이름</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Your name"
+                placeholder="이름 입력"
                 required
                 disabled={isLoading}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">이메일</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="you@example.com"
+                placeholder="example@email.com"
                 required
                 disabled={isLoading}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">비밀번호</Label>
               <Input
                 id="password"
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="At least 8 characters"
+                placeholder="8자 이상 입력"
                 required
                 disabled={isLoading}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">비밀번호 확인</Label>
               <Input
                 id="confirmPassword"
                 type="password"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                placeholder="Confirm your password"
+                placeholder="비밀번호 다시 입력"
                 required
                 disabled={isLoading}
               />
@@ -123,13 +123,13 @@ export function RegisterPage() {
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Account
+              회원가입
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              Already have an account?{' '}
+              이미 계정이 있으신가요?{' '}
               <Link to="/login" className="text-primary hover:underline">
-                Sign in
+                로그인
               </Link>
             </p>
           </form>

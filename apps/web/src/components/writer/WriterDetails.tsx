@@ -26,7 +26,7 @@ export function WriterDetails({
         className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Writers
+        작가 목록으로
       </Link>
 
       {/* Header section */}
@@ -52,7 +52,7 @@ export function WriterDetails({
               <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <BookOpen className="h-4 w-4" />
-                  {writer._count.stories} stories
+                  {writer._count.stories}개의 소설
                 </span>
                 <span className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
@@ -66,7 +66,7 @@ export function WriterDetails({
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={onEdit}>
                   <Edit className="h-4 w-4 mr-1" />
-                  Edit
+                  수정
                 </Button>
                 <Button
                   variant="outline"
@@ -75,7 +75,7 @@ export function WriterDetails({
                   onClick={onDelete}
                 >
                   <Trash2 className="h-4 w-4 mr-1" />
-                  Delete
+                  삭제
                 </Button>
               </div>
             )}
@@ -96,7 +96,7 @@ export function WriterDetails({
           {/* Generate story button */}
           <div className="pt-4">
             <Button size="lg" onClick={onGenerateStory}>
-              Generate Story with This Writer
+              이 작가로 소설 생성하기
             </Button>
           </div>
         </div>
@@ -105,7 +105,7 @@ export function WriterDetails({
       {/* System Prompt Preview */}
       <Card>
         <CardContent className="pt-6">
-          <h2 className="text-lg font-semibold mb-4">Writing Style & Prompt</h2>
+          <h2 className="text-lg font-semibold mb-4">작문 스타일 & 프롬프트</h2>
           <pre className="p-4 rounded-lg bg-muted text-sm whitespace-pre-wrap font-mono overflow-x-auto">
             {writer.systemPrompt}
           </pre>
@@ -114,9 +114,9 @@ export function WriterDetails({
 
       {/* Visibility badge */}
       <div className="flex items-center gap-2 text-sm">
-        <span className="text-muted-foreground">Visibility:</span>
+        <span className="text-muted-foreground">공개 여부:</span>
         <Badge variant={writer.isPublic ? 'default' : 'secondary'}>
-          {writer.isPublic ? 'Public' : 'Private'}
+          {writer.isPublic ? '공개' : '비공개'}
         </Badge>
       </div>
     </div>

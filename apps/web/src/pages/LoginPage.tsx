@@ -29,10 +29,8 @@ export function LoginPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Welcome Back</CardTitle>
-          <p className="text-muted-foreground text-sm mt-1">
-            Sign in to access your writers and stories
-          </p>
+          <CardTitle className="text-2xl">다시 오신 것을 환영합니다</CardTitle>
+          <p className="text-muted-foreground text-sm mt-1">로그인하여 작가와 소설을 관리하세요</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -51,7 +49,7 @@ export function LoginPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">이메일</Label>
               <Input
                 id="email"
                 type="email"
@@ -64,13 +62,13 @@ export function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">비밀번호</Label>
               <Input
                 id="password"
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="Your password"
+                placeholder="비밀번호 입력"
                 required
                 disabled={isLoading}
               />
@@ -78,13 +76,13 @@ export function LoginPage() {
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
+              로그인
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              Don't have an account?{' '}
+              계정이 없으신가요?{' '}
               <Link to="/register" className="text-primary hover:underline">
-                Sign up
+                회원가입
               </Link>
             </p>
           </form>

@@ -56,7 +56,7 @@ export function EditWriterPage() {
   if (!selectedWriter) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Writer not found</p>
+        <p className="text-muted-foreground">작가를 찾을 수 없습니다</p>
       </div>
     );
   }
@@ -70,13 +70,13 @@ export function EditWriterPage() {
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Writer
+          작가 상세로
         </button>
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Edit Writer</h1>
-          <p className="text-muted-foreground mt-1">Update your AI writer persona</p>
+          <h1 className="text-3xl font-bold text-foreground">작가 수정</h1>
+          <p className="text-muted-foreground mt-1">AI 작가의 정보를 수정하세요</p>
         </div>
 
         {/* Error Message */}

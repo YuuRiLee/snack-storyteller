@@ -232,7 +232,7 @@ export class WriterService {
       where: { id },
     });
 
-    return { message: 'Writer deleted successfully' };
+    return { message: '작가가 삭제되었습니다' };
   }
 
   async updateImage(id: string, imageUrl: string, userId: string) {

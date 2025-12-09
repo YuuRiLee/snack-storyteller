@@ -39,14 +39,14 @@ export function CreateWriterPage() {
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Writers
+          작가 목록으로
         </button>
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Create Writer</h1>
+          <h1 className="text-3xl font-bold text-foreground">작가 만들기</h1>
           <p className="text-muted-foreground mt-1">
-            Design a new AI writer persona with a unique style
+            독특한 스타일을 가진 새로운 AI 작가를 만들어보세요
           </p>
         </div>
 

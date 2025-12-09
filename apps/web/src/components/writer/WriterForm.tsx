@@ -66,27 +66,27 @@ export function WriterForm({ writer, isLoading = false, onSubmit, onCancel }: Wr
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = '이름을 입력해주세요';
     } else if (formData.name.length < 2 || formData.name.length > 50) {
-      newErrors.name = 'Name must be between 2 and 50 characters';
+      newErrors.name = '이름은 2자 이상 50자 이하로 입력해주세요';
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = 'Description is required';
+      newErrors.description = '설명을 입력해주세요';
     } else if (formData.description.length < 10 || formData.description.length > 500) {
-      newErrors.description = 'Description must be between 10 and 500 characters';
+      newErrors.description = '설명은 10자 이상 500자 이하로 입력해주세요';
     }
 
     if (!formData.systemPrompt.trim()) {
-      newErrors.systemPrompt = 'System prompt is required';
+      newErrors.systemPrompt = '시스템 프롬프트를 입력해주세요';
     } else if (formData.systemPrompt.length < 100 || formData.systemPrompt.length > 2000) {
-      newErrors.systemPrompt = 'System prompt must be between 100 and 2000 characters';
+      newErrors.systemPrompt = '시스템 프롬프트는 100자 이상 2000자 이하로 입력해주세요';
     }
 
     if (formData.genre.length === 0) {
-      newErrors.genre = 'At least one genre is required';
+      newErrors.genre = '최소 1개의 장르를 선택해주세요';
     } else if (formData.genre.length > 5) {
-      newErrors.genre = 'Maximum 5 genres allowed';
+      newErrors.genre = '장르는 최대 5개까지 선택할 수 있습니다';
     }
 
     setErrors(newErrors);
@@ -126,7 +126,7 @@ export function WriterForm({ writer, isLoading = false, onSubmit, onCancel }: Wr
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Name */}
       <div className="space-y-2">
-        <Label htmlFor="name">Writer Name *</Label>
+        <Label htmlFor="name">작가 이름 *</Label>
         <Input
           id="name"
           value={formData.name}
@@ -135,32 +135,30 @@ export function WriterForm({ writer, isLoading = false, onSubmit, onCancel }: Wr
           disabled={isLoading}
         />
         {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
-        <p className="text-xs text-muted-foreground">{formData.name.length}/50 characters</p>
+        <p className="text-xs text-muted-foreground">{formData.name.length}/50자</p>
       </div>
 
       {/* Description */}
       <div className="space-y-2">
-        <Label htmlFor="description">Description *</Label>
+        <Label htmlFor="description">설명 *</Label>
         <Textarea
           id="description"
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          placeholder="Describe this writer's style and specialty..."
+          placeholder="이 작가의 스타일과 특징을 설명해주세요..."
           rows={3}
           disabled={isLoading}
         />
         {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
-        <p className="text-xs text-muted-foreground">
-          {formData.description.length}/500 characters
-        </p>
+        <p className="text-xs text-muted-foreground">{formData.description.length}/500자</p>
       </div>
 
       {/* System Prompt */}
       <div className="space-y-2">
-        <Label htmlFor="systemPrompt">System Prompt *</Label>
+        <Label htmlFor="systemPrompt">시스템 프롬프트 *</Label>
         <p className="text-xs text-muted-foreground mb-2">
-          This defines how the AI will write stories. Include writing style, genre preferences,
-          tone, and any specific instructions.
+          AI가 소설을 작성하는 방식을 정의합니다. 문체, 장르 선호도, 톤, 특별한 지시사항 등을
+          포함해주세요.
         </p>
         <Textarea
           id="systemPrompt"
@@ -185,14 +183,12 @@ export function WriterForm({ writer, isLoading = false, onSubmit, onCancel }: Wr
           disabled={isLoading}
         />
         {errors.systemPrompt && <p className="text-sm text-destructive">{errors.systemPrompt}</p>}
-        <p className="text-xs text-muted-foreground">
-          {formData.systemPrompt.length}/2000 characters
-        </p>
+        <p className="text-xs text-muted-foreground">{formData.systemPrompt.length}/2000자</p>
       </div>
 
       {/* Genres */}
       <div className="space-y-2">
-        <Label>Genres * (1-5)</Label>
+        <Label>장르 * (1-5개)</Label>
 
         {/* Selected genres */}
         <div className="flex flex-wrap gap-2 min-h-[32px]">
@@ -215,7 +211,7 @@ export function WriterForm({ writer, isLoading = false, onSubmit, onCancel }: Wr
           <Input
             value={genreInput}
             onChange={(e) => setGenreInput(e.target.value)}
-            placeholder="Add a genre..."
+            placeholder="장르 추가..."
             disabled={isLoading || formData.genre.length >= 5}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
@@ -256,7 +252,7 @@ export function WriterForm({ writer, isLoading = false, onSubmit, onCancel }: Wr
 
       {/* Image URL */}
       <div className="space-y-2">
-        <Label htmlFor="imageUrl">Image URL (optional)</Label>
+        <Label htmlFor="imageUrl">이미지 URL (선택)</Label>
         <Input
           id="imageUrl"
           value={formData.imageUrl}
@@ -277,7 +273,7 @@ export function WriterForm({ writer, isLoading = false, onSubmit, onCancel }: Wr
           className="h-4 w-4 rounded border-input"
         />
         <Label htmlFor="isPublic" className="font-normal">
-          Make this writer public (visible to all users)
+          공개 작가로 설정 (모든 사용자에게 표시)
         </Label>
       </div>
 
@@ -285,12 +281,12 @@ export function WriterForm({ writer, isLoading = false, onSubmit, onCancel }: Wr
       <div className="flex justify-end gap-3 pt-4">
         {onCancel && (
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+            취소
           </Button>
         )}
         <Button type="submit" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isEdit ? 'Update Writer' : 'Create Writer'}
+          {isEdit ? '작가 수정' : '작가 만들기'}
         </Button>
       </div>
     </form>

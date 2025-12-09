@@ -100,7 +100,7 @@ export function WriterCard({ writer, showActions = false, onEdit, onDelete }: Wr
               }}
               className="flex-1 rounded-md bg-muted px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted/80"
             >
-              Edit
+              수정
             </button>
             <button
               onClick={(e) => {
@@ -109,7 +109,7 @@ export function WriterCard({ writer, showActions = false, onEdit, onDelete }: Wr
               }}
               className="rounded-md px-3 py-1.5 text-sm text-destructive transition-colors hover:bg-destructive/10"
             >
-              Delete
+              삭제
             </button>
           </div>
         )}
