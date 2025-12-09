@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { useAuthStore } from '../stores';
 import { Button, Input, Label, Card, CardContent, CardHeader, CardTitle } from '../components/ui';
 
@@ -21,12 +21,12 @@ export function RegisterPage() {
     setValidationError('');
 
     if (formData.password !== formData.confirmPassword) {
-      setValidationError('Passwords do not match');
+      setValidationError('비밀번호가 일치하지 않습니다.');
       return;
     }
 
-    if (formData.password.length < 6) {
-      setValidationError('Password must be at least 6 characters');
+    if (formData.password.length < 8) {
+      setValidationError('비밀번호는 8자 이상이어야 합니다.');
       return;
     }
 
@@ -54,17 +54,18 @@ export function RegisterPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {displayError && (
-              <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
-                {displayError}
+              <div className="flex items-center justify-between gap-2 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+                <span>{displayError}</span>
                 <button
                   type="button"
                   onClick={() => {
                     clearError();
                     setValidationError('');
                   }}
-                  className="ml-2 underline"
+                  className="shrink-0 p-1 rounded-full hover:bg-destructive/20 transition-colors"
+                  aria-label="닫기"
                 >
-                  Dismiss
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             )}
@@ -101,7 +102,7 @@ export function RegisterPage() {
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="At least 6 characters"
+                placeholder="At least 8 characters"
                 required
                 disabled={isLoading}
               />

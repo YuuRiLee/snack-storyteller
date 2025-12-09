@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { useWriterStore, useAuthStore } from '../stores';
@@ -10,6 +10,7 @@ export function MyWritersPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
   const { myWriters, meta, isLoading, fetchMyWriters, deleteWriter } = useWriterStore();
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -28,11 +29,14 @@ export function MyWritersPage() {
 
   const handleDelete = useCallback(
     async (writer: Writer) => {
-      if (window.confirm(`Are you sure you want to delete "${writer.name}"?`)) {
+      if (window.confirm(`"${writer.name}"을(를) 삭제하시겠습니까?`)) {
+        setError(null);
         try {
           await deleteWriter(writer.id);
-        } catch (error) {
-          console.error('Failed to delete writer:', error);
+        } catch (err) {
+          const message =
+            err instanceof Error ? err.message : '작가 삭제에 실패했습니다. 다시 시도해주세요.';
+          setError(message);
         }
       }
     },
@@ -60,6 +64,19 @@ export function MyWritersPage() {
             </Button>
           </Link>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive">
+            <p>{error}</p>
+            <button
+              onClick={() => setError(null)}
+              className="mt-2 text-sm underline hover:no-underline"
+            >
+              닫기
+            </button>
+          </div>
+        )}
 
         {/* Gallery */}
         <WriterGallery

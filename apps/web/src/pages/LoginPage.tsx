@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { useAuthStore } from '../stores';
 import { Button, Input, Label, Card, CardContent, CardHeader, CardTitle } from '../components/ui';
 
@@ -15,11 +15,13 @@ export function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearError();
     try {
       await login(formData);
       navigate('/writers');
     } catch {
-      // Error is handled by the store
+      // Error is already set in the store by the login function
+      // No additional handling needed here
     }
   };
 
@@ -35,10 +37,15 @@ export function LoginPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
-                {error}
-                <button type="button" onClick={clearError} className="ml-2 underline">
-                  Dismiss
+              <div className="flex items-center justify-between gap-2 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+                <span>{error}</span>
+                <button
+                  type="button"
+                  onClick={clearError}
+                  className="shrink-0 p-1 rounded-full hover:bg-destructive/20 transition-colors"
+                  aria-label="닫기"
+                >
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             )}
