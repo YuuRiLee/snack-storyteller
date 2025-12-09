@@ -1,182 +1,344 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import OpenAI from 'openai';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  AIProvider,
+  AIProviderError,
+  FallbackEvent,
+} from './providers/ai-provider.interface';
+import { OpenAIProvider } from './providers/openai.provider';
+import { GeminiProvider } from './providers/gemini.provider';
+import { CircuitBreakerService } from './circuit-breaker/circuit-breaker.service';
 import {
   AIServiceError,
   OpenAITimeoutError,
   OpenAIRateLimitError,
+  AIAllProvidersFailedError,
 } from './errors/ai.errors';
-import { PromptBuilderService } from './prompt/prompt-builder.service';
 
 /**
- * AI Service
+ * AI Service (Orchestrator)
  *
- * Integrates OpenAI GPT-4 for story generation with streaming support.
+ * Multi-Provider Fallback System을 구현하는 오케스트레이터.
  *
- * MCP Tool Usage Documentation (for portfolio evaluation):
- * - Context7: Used to learn official OpenAI Node.js streaming patterns
- *   Query: "/openai/openai-node" with topic "streaming chat completions gpt-4"
- *   Result: Official patterns for AsyncIterator streaming and event-based streaming
- * - Sequential Thinking: Used to design Few-shot learning prompt engineering strategy
- *   Analysis: Compared Few-shot vs Fine-tuning, optimized token budget, quality vs speed
- *   Result: Few-shot with 3 tag-matched examples for MVP flexibility
+ * 주요 기능:
+ * - Provider 우선순위에 따른 자동 Fallback
+ * - Circuit Breaker 패턴으로 장애 격리
+ * - 투명한 Provider 전환 (호출자는 변경 불필요)
  *
- * Implementation Strategy:
- * - Primary: AsyncIterator pattern for simplicity and memory efficiency
- * - Streaming: Real-time token delivery via AsyncGenerator
- * - Prompt Engineering: Few-shot learning with Jaccard similarity tag matching
- * - Error Handling: Retry logic with exponential backoff
+ * Fallback 순서:
+ * 1. OpenAI GPT-4o-mini (Primary)
+ * 2. Google Gemini 1.5 Flash (Fallback)
  *
- * Source: Official OpenAI Node.js Documentation (Context7)
- * https://github.com/openai/openai-node/blob/master/helpers.md
+ * 사용법 (기존과 동일):
+ * ```typescript
+ * for await (const chunk of aiService.generateStoryStream(prompt, tags)) {
+ *   console.log(chunk);
+ * }
+ * ```
  */
 @Injectable()
-export class AIService {
+export class AIService implements OnModuleInit {
   private readonly logger = new Logger(AIService.name);
-  private readonly openai: OpenAI;
+  private providers: AIProvider[] = [];
+  private fallbackEvents: FallbackEvent[] = [];
 
   constructor(
-    private readonly config: ConfigService,
-    private readonly promptBuilder: PromptBuilderService,
-  ) {
-    this.openai = new OpenAI({
-      apiKey: this.config.get<string>('OPENAI_API_KEY'),
+    private readonly circuitBreaker: CircuitBreakerService,
+    private readonly openaiProvider: OpenAIProvider,
+    private readonly geminiProvider: GeminiProvider,
+  ) {}
+
+  onModuleInit() {
+    // Initialize providers in priority order
+    this.initializeProviders();
+  }
+
+  /**
+   * Initialize and sort providers by priority
+   */
+  private initializeProviders(): void {
+    const allProviders = [this.openaiProvider, this.geminiProvider];
+
+    // Filter enabled providers and sort by priority
+    this.providers = allProviders
+      .filter((p) => p.config.enabled)
+      .sort((a, b) => a.config.priority - b.config.priority);
+
+    this.logger.log('AIService initialized', {
+      providers: this.providers.map((p) => ({
+        name: p.config.name,
+        priority: p.config.priority,
+        enabled: p.config.enabled,
+      })),
     });
 
-    this.logger.log('AIService initialized with OpenAI client');
+    if (this.providers.length === 0) {
+      this.logger.error(
+        'No AI providers are enabled! Story generation will fail.',
+      );
+    }
   }
 
   /**
    * Generate story with streaming support
    *
-   * From Context7 official pattern:
-   * ```
-   * const stream = await client.chat.completions.create({
-   *   model: 'gpt-4o',
-   *   messages: [...],
-   *   stream: true,
-   * });
-   * for await (const chunk of stream) {
-   *   process.stdout.write(chunk.choices[0]?.delta?.content || '');
-   * }
-   * ```
+   * Implements automatic fallback:
+   * 1. Try primary provider
+   * 2. On failure, try next provider
+   * 3. Repeat until success or all providers exhausted
    *
    * @param systemPrompt - Writer's systemPrompt (100-2000 chars)
    * @param tags - Story style tags (1-3 tags)
    * @returns AsyncGenerator yielding content chunks
+   * @throws AIAllProvidersFailedError if all providers fail
    */
   async *generateStoryStream(
     systemPrompt: string,
     tags: string[],
   ): AsyncGenerator<string> {
     const startTime = Date.now();
-    let firstTokenTime: number | null = null;
+    const errors: Array<{ provider: string; error: AIProviderError }> = [];
 
     this.logger.log({
       event: 'story_stream_started',
       tags,
       systemPromptLength: systemPrompt.length,
+      availableProviders: this.providers.map((p) => p.config.name),
     });
 
-    try {
-      // Build prompts with Few-shot examples (PromptBuilder from Sequential Thinking)
-      const { systemPrompt: systemMessage, userPrompt: userMessage } =
-        this.promptBuilder.buildPrompt(systemPrompt, tags);
+    for (const provider of this.providers) {
+      const providerName = provider.config.name;
 
-      // Create streaming completion (official OpenAI pattern from Context7)
-      const stream = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: systemMessage },
-          { role: 'user', content: userMessage },
-        ],
-        temperature: 0.9, // High creativity for story writing
-        max_tokens: 4000, // ~1500-2000 words
-        presence_penalty: 0.6, // Encourage topic variety
-        frequency_penalty: 0.3, // Reduce repetition
-        top_p: 0.95, // Nucleus sampling
-        stream: true, // Enable streaming
-      });
-
-      // Stream tokens (AsyncIterator pattern from Context7)
-      for await (const chunk of stream) {
-        if (!firstTokenTime) {
-          firstTokenTime = Date.now();
-          const latency = firstTokenTime - startTime;
-          this.logger.debug({ event: 'first_token_received', latency });
-        }
-
-        const content = chunk.choices[0]?.delta?.content;
-        if (content) {
-          yield content;
-        }
+      // Circuit Breaker check
+      if (!this.circuitBreaker.canRequest(providerName)) {
+        this.logger.warn({
+          event: 'provider_skipped_circuit_open',
+          provider: providerName,
+        });
+        continue;
       }
 
-      const totalDuration = Date.now() - startTime;
-      this.logger.log({
-        event: 'story_stream_completed',
-        totalDuration,
-        firstTokenLatency: firstTokenTime ? firstTokenTime - startTime : null,
-      });
-    } catch (error: unknown) {
-      this.logger.error('OpenAI streaming error', error);
+      try {
+        this.logger.debug({
+          event: 'trying_provider',
+          provider: providerName,
+        });
 
-      // Handle specific OpenAI errors
-      if (error && typeof error === 'object') {
-        if ('status' in error && error.status === 429) {
-          throw new OpenAIRateLimitError();
+        // Stream from provider
+        let hasYielded = false;
+        for await (const chunk of provider.generateStoryStream(
+          systemPrompt,
+          tags,
+        )) {
+          hasYielded = true;
+          yield chunk;
         }
-        if (
-          'code' in error &&
-          (error.code === 'ETIMEDOUT' || error.code === 'ECONNABORTED')
-        ) {
-          throw new OpenAITimeoutError();
+
+        // Success - record and return
+        if (hasYielded) {
+          this.circuitBreaker.recordSuccess(providerName);
+
+          this.logger.log({
+            event: 'story_stream_completed',
+            provider: providerName,
+            duration: Date.now() - startTime,
+          });
+
+          return;
+        }
+      } catch (error: unknown) {
+        const providerError =
+          error instanceof AIProviderError
+            ? error
+            : new AIProviderError(
+                error instanceof Error ? error.message : 'Unknown error',
+                providerName,
+                'UNKNOWN',
+                true,
+                error instanceof Error ? error : undefined,
+              );
+
+        // Record failure
+        this.circuitBreaker.recordFailure(
+          providerName,
+          providerError.originalError,
+        );
+        errors.push({ provider: providerName, error: providerError });
+
+        // Log fallback event
+        const nextProvider = this.getNextAvailableProvider(provider);
+        if (nextProvider) {
+          this.recordFallbackEvent(
+            providerName,
+            nextProvider.config.name,
+            providerError,
+          );
+        }
+
+        this.logger.error({
+          event: 'provider_failed',
+          provider: providerName,
+          error: providerError.message,
+          code: providerError.code,
+          retryable: providerError.retryable,
+          willFallback: !!nextProvider,
+        });
+
+        // Continue to next provider if error is retryable
+        if (!providerError.retryable) {
+          // Non-retryable error - throw immediately
+          throw this.convertToLegacyError(providerError);
         }
       }
-
-      const message =
-        error instanceof Error ? error.message : 'Story generation failed';
-      throw new AIServiceError(message, 'OPENAI_ERROR', true);
     }
+
+    // All providers failed
+    const duration = Date.now() - startTime;
+    this.logger.error({
+      event: 'all_providers_failed',
+      duration,
+      errors: errors.map((e) => ({
+        provider: e.provider,
+        code: e.error.code,
+        message: e.error.message,
+      })),
+    });
+
+    throw new AIAllProvidersFailedError(
+      errors.map((e) => e.provider),
+      errors.map((e) => e.error),
+    );
   }
 
   /**
    * Generate title for story
    *
-   * Uses single completion for quick title generation.
-   * Target: <10 characters, concise and impactful
+   * Uses primary available provider for title generation.
+   * Falls back silently on error (non-blocking).
    *
    * @param content - Generated story content (first 1000 chars used)
    * @returns Promise<string> - Title (10 chars max)
    */
   async generateTitle(content: string): Promise<string> {
-    try {
-      const response = await this.openai.chat.completions.create({
-        model: 'gpt-4-turbo-preview',
-        messages: [
-          {
-            role: 'system',
-            content:
-              '당신은 단편 소설의 제목을 짓는 전문가입니다. 10자 이내의 간결하고 인상적인 제목을 만드세요.',
-          },
-          {
-            role: 'user',
-            content: `다음 소설의 제목을 10자 이내로 지어주세요. 제목만 출력하세요:\n\n${content.slice(0, 1000)}`,
-          },
-        ],
-        temperature: 0.8,
-        max_tokens: 50,
-      });
+    for (const provider of this.providers) {
+      if (!this.circuitBreaker.canRequest(provider.config.name)) {
+        continue;
+      }
 
-      const title = response.choices[0].message.content?.trim() || '제목 없음';
+      try {
+        const title = await provider.generateTitle(content);
+        this.circuitBreaker.recordSuccess(provider.config.name);
+        return title;
+      } catch (error) {
+        this.logger.warn({
+          event: 'title_generation_failed',
+          provider: provider.config.name,
+          error: error instanceof Error ? error.message : 'Unknown',
+        });
+        // Continue to next provider
+      }
+    }
 
-      this.logger.debug({ event: 'title_generated', title });
+    // Fallback to default title
+    return '새로운 이야기';
+  }
 
-      return title;
-    } catch (error: unknown) {
-      this.logger.error('Title generation error', error);
-      // Fallback to generic title on error (non-blocking)
-      return '새로운 이야기';
+  /**
+   * Get current provider status for monitoring
+   */
+  getProviderStatus(): Array<{
+    name: string;
+    enabled: boolean;
+    priority: number;
+    circuitState: string;
+    stats: {
+      totalRequests: number;
+      totalFailures: number;
+      totalSuccesses: number;
+    };
+  }> {
+    return this.providers.map((p) => {
+      const stats = this.circuitBreaker.getStats(p.config.name);
+      return {
+        name: p.config.name,
+        enabled: p.config.enabled,
+        priority: p.config.priority,
+        circuitState: stats.state,
+        stats: {
+          totalRequests: stats.totalRequests,
+          totalFailures: stats.totalFailures,
+          totalSuccesses: stats.totalSuccesses,
+        },
+      };
+    });
+  }
+
+  /**
+   * Get recent fallback events (for monitoring)
+   */
+  getRecentFallbackEvents(limit = 10): FallbackEvent[] {
+    return this.fallbackEvents.slice(-limit);
+  }
+
+  /**
+   * Reset all circuit breakers (admin operation)
+   */
+  resetAllCircuits(): void {
+    this.circuitBreaker.resetAll();
+    this.logger.log('All circuits reset by admin');
+  }
+
+  // Private helper methods
+
+  private getNextAvailableProvider(
+    currentProvider: AIProvider,
+  ): AIProvider | null {
+    const currentIndex = this.providers.indexOf(currentProvider);
+    for (let i = currentIndex + 1; i < this.providers.length; i++) {
+      const nextProvider = this.providers[i];
+      if (this.circuitBreaker.canRequest(nextProvider.config.name)) {
+        return nextProvider;
+      }
+    }
+    return null;
+  }
+
+  private recordFallbackEvent(
+    from: string,
+    to: string,
+    error: AIProviderError,
+  ): void {
+    const event: FallbackEvent = {
+      fromProvider: from,
+      toProvider: to,
+      reason: error.message,
+      errorCode: error.code,
+      timestamp: new Date(),
+    };
+
+    this.fallbackEvents.push(event);
+
+    // Keep only last 100 events
+    if (this.fallbackEvents.length > 100) {
+      this.fallbackEvents = this.fallbackEvents.slice(-100);
+    }
+
+    this.logger.warn({
+      event: 'fallback_triggered',
+      ...event,
+    });
+  }
+
+  /**
+   * Convert AIProviderError to legacy error types for backward compatibility
+   */
+  private convertToLegacyError(error: AIProviderError): Error {
+    switch (error.code) {
+      case 'TIMEOUT':
+        return new OpenAITimeoutError();
+      case 'RATE_LIMIT':
+        return new OpenAIRateLimitError();
+      default:
+        return new AIServiceError(error.message, error.code, error.retryable);
     }
   }
 }

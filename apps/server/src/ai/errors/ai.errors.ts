@@ -20,7 +20,7 @@ export class AIServiceError extends Error {
  */
 export class OpenAITimeoutError extends AIServiceError {
   constructor() {
-    super('OpenAI API request timed out', 'OPENAI_TIMEOUT', true);
+    super('AI 서비스 응답 시간이 초과되었습니다', 'OPENAI_TIMEOUT', true);
   }
 }
 
@@ -31,7 +31,7 @@ export class OpenAITimeoutError extends AIServiceError {
  */
 export class OpenAIRateLimitError extends AIServiceError {
   constructor() {
-    super('OpenAI API rate limit exceeded', 'OPENAI_RATE_LIMIT', true);
+    super('AI 서비스 사용량 한도를 초과했습니다', 'OPENAI_RATE_LIMIT', true);
   }
 }
 
@@ -42,7 +42,7 @@ export class OpenAIRateLimitError extends AIServiceError {
  */
 export class ModerationFailedError extends AIServiceError {
   constructor(reason: string) {
-    super(`Content moderation failed: ${reason}`, 'MODERATION_FAILED', true);
+    super(`콘텐츠 검토 실패: ${reason}`, 'MODERATION_FAILED', true);
   }
 }
 
@@ -53,6 +53,39 @@ export class ModerationFailedError extends AIServiceError {
  */
 export class ContentUnsafeError extends AIServiceError {
   constructor(reason: string) {
-    super(`Unsafe content detected: ${reason}`, 'CONTENT_UNSAFE', false);
+    super(`부적절한 콘텐츠 감지: ${reason}`, 'CONTENT_UNSAFE', false);
+  }
+}
+
+/**
+ * All Providers Failed Error
+ * Thrown when all AI providers have failed
+ * Retryable: No (all fallbacks exhausted)
+ */
+export class AIAllProvidersFailedError extends AIServiceError {
+  constructor(
+    public readonly attemptedProviders: string[],
+    public readonly providerErrors: Error[],
+  ) {
+    super(
+      `모든 AI 서비스 연결에 실패했습니다. 잠시 후 다시 시도해주세요.`,
+      'ALL_PROVIDERS_FAILED',
+      false,
+    );
+  }
+}
+
+/**
+ * Circuit Open Error
+ * Thrown when circuit breaker is open for all providers
+ * Retryable: No (must wait for circuit to reset)
+ */
+export class AICircuitOpenError extends AIServiceError {
+  constructor(providerName: string) {
+    super(
+      `AI 서비스(${providerName})가 일시적으로 이용 불가능합니다`,
+      'CIRCUIT_OPEN',
+      false,
+    );
   }
 }
