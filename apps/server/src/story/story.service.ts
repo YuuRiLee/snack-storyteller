@@ -290,7 +290,10 @@ export class StoryService {
    * @param userId - User ID for ownership check and bookmark status
    * @returns Story details with bookmark information
    */
-  async getStoryById(id: string, userId: string): Promise<StoryWithBookmarkDto> {
+  async getStoryById(
+    id: string,
+    userId: string,
+  ): Promise<StoryWithBookmarkDto> {
     const story = await this.prisma.story.findFirst({
       where: { id, userId },
       include: {
@@ -431,7 +434,9 @@ export class StoryService {
           if (!writer) {
             observer.next({
               type: 'error',
-              data: { message: `Writer ${dto.writerId} not found` },
+              data: {
+                message: `작가를 찾을 수 없습니다 (ID: ${dto.writerId})`,
+              },
             });
             observer.complete();
             return;
