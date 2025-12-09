@@ -23,7 +23,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('Email already registered');
+      throw new ConflictException('이미 가입된 이메일입니다.');
     }
 
     // Hash password with bcrypt (12 salt rounds as per security requirements)
@@ -58,14 +58,18 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(
+        '이메일 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.',
+      );
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(
+        '이메일 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.',
+      );
     }
 
     // Generate JWT token (24h expiration)
@@ -95,7 +99,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException('사용자를 찾을 수 없습니다.');
     }
 
     return user;

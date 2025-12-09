@@ -10,30 +10,15 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
-  UnauthorizedException,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { BookmarkService } from './bookmark.service';
-import {
-  CreateBookmarkDto,
-  BookmarkDto,
-  PaginatedBookmarksDto,
-} from './dto';
+import { CreateBookmarkDto, BookmarkDto, PaginatedBookmarksDto } from './dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { AuthUser } from '../auth/types/user.type';
+import { getUserIdOrThrow } from '../common/utils';
+import type { AuthUser } from '../auth/types/user.type';
 
-interface RequestWithUser extends Request {
+interface RequestWithUser {
   user?: AuthUser;
-}
-
-/**
- * Extract authenticated user ID from request
- */
-function getUserIdOrThrow(req: RequestWithUser): string {
-  if (!req.user?.id) {
-    throw new UnauthorizedException('Authentication required');
-  }
-  return req.user.id;
 }
 
 /**
