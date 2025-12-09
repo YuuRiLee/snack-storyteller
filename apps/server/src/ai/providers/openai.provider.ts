@@ -111,11 +111,12 @@ export class OpenAIProvider implements AIProvider {
 
   /**
    * Generate title for story
+   * Uses the same model as story generation for cost efficiency
    */
   async generateTitle(content: string): Promise<string> {
     try {
       const response = await this.client.chat.completions.create({
-        model: 'gpt-4-turbo-preview',
+        model: this.config.model,
         messages: [
           {
             role: 'system',
