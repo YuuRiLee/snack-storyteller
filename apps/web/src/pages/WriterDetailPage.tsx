@@ -56,7 +56,7 @@ export function WriterDetailPage() {
   if (!selectedWriter) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Writer not found</p>
+        <p className="text-muted-foreground">작가를 찾을 수 없습니다</p>
       </div>
     );
   }
