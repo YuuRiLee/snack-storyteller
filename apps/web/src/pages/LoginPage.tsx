@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { useAuthStore } from '../stores';
 import { Button, Input, Label, Card, CardContent, CardHeader, CardTitle } from '../components/ui';
 
@@ -15,11 +15,13 @@ export function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearError();
     try {
       await login(formData);
       navigate('/writers');
     } catch {
-      // Error is handled by the store
+      // Error is already set in the store by the login function
+      // No additional handling needed here
     }
   };
 
@@ -27,24 +29,27 @@ export function LoginPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Welcome Back</CardTitle>
-          <p className="text-muted-foreground text-sm mt-1">
-            Sign in to access your writers and stories
-          </p>
+          <CardTitle className="text-2xl">다시 오신 것을 환영합니다</CardTitle>
+          <p className="text-muted-foreground text-sm mt-1">로그인하여 작가와 소설을 관리하세요</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
-                {error}
-                <button type="button" onClick={clearError} className="ml-2 underline">
-                  Dismiss
+              <div className="flex items-center justify-between gap-2 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+                <span>{error}</span>
+                <button
+                  type="button"
+                  onClick={clearError}
+                  className="shrink-0 p-1 rounded-full hover:bg-destructive/20 transition-colors"
+                  aria-label="닫기"
+                >
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">이메일</Label>
               <Input
                 id="email"
                 type="email"
@@ -57,13 +62,13 @@ export function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">비밀번호</Label>
               <Input
                 id="password"
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="Your password"
+                placeholder="비밀번호 입력"
                 required
                 disabled={isLoading}
               />
@@ -71,13 +76,13 @@ export function LoginPage() {
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
+              로그인
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              Don't have an account?{' '}
+              계정이 없으신가요?{' '}
               <Link to="/register" className="text-primary hover:underline">
-                Sign up
+                회원가입
               </Link>
             </p>
           </form>

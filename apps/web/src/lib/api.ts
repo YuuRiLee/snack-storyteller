@@ -22,10 +22,13 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Don't redirect for login/register endpoints - they handle their own errors
+    const isAuthEndpoint = error.config?.url?.startsWith('/auth/');
+
+    if (error.response?.status === 401 && !isAuthEndpoint) {
       localStorage.removeItem('access_token');
       localStorage.removeItem('user');
-      // Optionally redirect to login
+      // Redirect to login only for non-auth endpoints (e.g., expired token)
       window.location.href = '/login';
     }
     return Promise.reject(error);

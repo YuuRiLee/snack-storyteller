@@ -30,7 +30,7 @@ export function WriterGallery({
   onDelete,
   onLoadMore,
   hasMore = false,
-  emptyMessage = 'No writers found',
+  emptyMessage = '작가를 찾을 수 없습니다',
 }: WriterGalleryProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState<string | undefined>();
@@ -58,7 +58,7 @@ export function WriterGallery({
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Search writers..."
+            placeholder="작가 검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9"
@@ -71,7 +71,7 @@ export function WriterGallery({
           className="flex items-center gap-2"
         >
           <Filter className="h-4 w-4" />
-          Filters
+          필터
           {selectedGenre && (
             <Badge variant="secondary" className="ml-1">
               1
@@ -83,7 +83,7 @@ export function WriterGallery({
       {/* Genre Filters */}
       {showFilters && genres.length > 0 && (
         <div className="flex flex-wrap gap-2 rounded-lg border border-border/50 bg-muted/30 p-4">
-          <span className="mr-2 text-sm font-medium text-muted-foreground">Genres:</span>
+          <span className="mr-2 text-sm font-medium text-muted-foreground">장르:</span>
           {genres.map((genre) => (
             <Badge
               key={genre}
@@ -105,7 +105,7 @@ export function WriterGallery({
               }}
               className="text-xs text-muted-foreground hover:text-foreground"
             >
-              Clear filter
+              필터 초기화
             </button>
           )}
         </div>
@@ -147,10 +147,10 @@ export function WriterGallery({
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Loading...
+                불러오는 중...
               </>
             ) : (
-              'Load More'
+              '더 보기'
             )}
           </Button>
         </div>

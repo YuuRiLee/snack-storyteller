@@ -1,4 +1,4 @@
-import * as React from 'react';
+// React import for JSX (using automatic JSX runtime)
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getStoryById, deleteStory, toggleBookmark } from '../api';
@@ -214,11 +214,7 @@ function ChevronLeftIcon() {
       stroke="currentColor"
       className="w-4 h-4 mr-1"
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M15.75 19.5L8.25 12l7.5-7.5"
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
     </svg>
   );
 }

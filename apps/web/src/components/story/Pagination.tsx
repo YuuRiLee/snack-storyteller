@@ -1,4 +1,4 @@
-import * as React from 'react';
+// React import for JSX (not directly used but required)
 import { Button } from '../ui';
 
 interface PaginationProps {
@@ -82,10 +82,7 @@ export function Pagination({
   const pageNumbers = getPageNumbers();
 
   return (
-    <nav
-      className="flex items-center justify-center gap-1"
-      aria-label="페이지네이션"
-    >
+    <nav className="flex items-center justify-center gap-1" aria-label="페이지네이션">
       {/* Previous Button */}
       <Button
         variant="outline"
@@ -102,10 +99,7 @@ export function Pagination({
       <div className="flex items-center gap-1">
         {pageNumbers.map((page, index) =>
           page === 'ellipsis' ? (
-            <span
-              key={`ellipsis-${index}`}
-              className="px-2 text-muted-foreground"
-            >
+            <span key={`ellipsis-${index}`} className="px-2 text-muted-foreground">
               ...
             </span>
           ) : (
@@ -149,11 +143,7 @@ function ChevronLeftIcon() {
       stroke="currentColor"
       className="w-4 h-4"
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M15.75 19.5L8.25 12l7.5-7.5"
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
     </svg>
   );
 }
@@ -168,11 +158,7 @@ function ChevronRightIcon() {
       stroke="currentColor"
       className="w-4 h-4"
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M8.25 4.5l7.5 7.5-7.5 7.5"
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
     </svg>
   );
 }

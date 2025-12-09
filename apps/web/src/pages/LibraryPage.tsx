@@ -60,16 +60,14 @@ export function LibraryPage() {
         return {
           ...old,
           stories: old.stories.map((story) =>
-            story.id === storyId
-              ? { ...story, isBookmarked: !story.isBookmarked }
-              : story,
+            story.id === storyId ? { ...story, isBookmarked: !story.isBookmarked } : story,
           ),
         };
       });
 
       return { previousData };
     },
-    onError: (err, storyId, context) => {
+    onError: (_err, _storyId, context) => {
       // Rollback on error
       if (context?.previousData) {
         queryClient.setQueryData(['stories', filters], context.previousData);
@@ -105,27 +103,19 @@ export function LibraryPage() {
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold">내 소설 라이브러리</h1>
-        <p className="text-muted-foreground">
-          생성된 소설을 검색하고 관리하세요
-        </p>
+        <p className="text-muted-foreground">생성된 소설을 검색하고 관리하세요</p>
       </div>
 
       {/* Stats */}
       {stats && <StoryStats stats={stats} />}
 
       {/* Filters */}
-      <StoryFilters
-        filters={filters}
-        onFiltersChange={setFilters}
-        tags={availableTags}
-      />
+      <StoryFilters filters={filters} onFiltersChange={setFilters} tags={availableTags} />
 
       {/* Error State */}
       {storiesError && (
         <div className="text-center py-8">
-          <p className="text-destructive">
-            소설을 불러오는 중 오류가 발생했습니다.
-          </p>
+          <p className="text-destructive">소설을 불러오는 중 오류가 발생했습니다.</p>
           <button
             onClick={() => queryClient.invalidateQueries({ queryKey: ['stories'] })}
             className="text-primary underline mt-2"
@@ -155,9 +145,7 @@ export function LibraryPage() {
                   : '아직 생성된 소설이 없습니다.'}
               </p>
               {!filters.search && !filters.tag && !filters.bookmarked && (
-                <p className="text-sm text-muted-foreground mt-2">
-                  새로운 소설을 생성해보세요!
-                </p>
+                <p className="text-sm text-muted-foreground mt-2">새로운 소설을 생성해보세요!</p>
               )}
             </div>
           ) : (
@@ -169,8 +157,7 @@ export function LibraryPage() {
                     story={story}
                     onBookmarkToggle={handleBookmarkToggle}
                     isBookmarkLoading={
-                      bookmarkMutation.isPending &&
-                      bookmarkMutation.variables === story.id
+                      bookmarkMutation.isPending && bookmarkMutation.variables === story.id
                     }
                   />
                 ))}
@@ -190,13 +177,8 @@ export function LibraryPage() {
 
               {/* Results Summary */}
               <p className="text-center text-sm text-muted-foreground">
-                총 {storiesData.total}개의 소설 중{' '}
-                {(storiesData.page - 1) * storiesData.limit + 1}-
-                {Math.min(
-                  storiesData.page * storiesData.limit,
-                  storiesData.total,
-                )}
-                개 표시
+                총 {storiesData.total}개의 소설 중 {(storiesData.page - 1) * storiesData.limit + 1}-
+                {Math.min(storiesData.page * storiesData.limit, storiesData.total)}개 표시
               </p>
             </>
           )}

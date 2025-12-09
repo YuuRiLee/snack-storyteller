@@ -10,6 +10,7 @@ export function WriterDetailPage() {
   const { user } = useAuthStore();
   const { selectedWriter, fetchWriter, deleteWriter } = useWriterStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -26,12 +27,15 @@ export function WriterDetailPage() {
 
   const handleDelete = async () => {
     if (!id) return;
-    if (window.confirm('Are you sure you want to delete this writer?')) {
+    if (window.confirm(`"${selectedWriter?.name}"을(를) 삭제하시겠습니까?`)) {
+      setError(null);
       try {
         await deleteWriter(id);
         navigate('/writers');
-      } catch (error) {
-        console.error('Failed to delete writer:', error);
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : '작가 삭제에 실패했습니다. 다시 시도해주세요.';
+        setError(message);
       }
     }
   };
@@ -52,7 +56,7 @@ export function WriterDetailPage() {
   if (!selectedWriter) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Writer not found</p>
+        <p className="text-muted-foreground">작가를 찾을 수 없습니다</p>
       </div>
     );
   }
@@ -60,6 +64,19 @@ export function WriterDetailPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive">
+            <p>{error}</p>
+            <button
+              onClick={() => setError(null)}
+              className="mt-2 text-sm underline hover:no-underline"
+            >
+              닫기
+            </button>
+          </div>
+        )}
+
         <WriterDetails
           writer={selectedWriter}
           isOwner={isOwner ?? false}

@@ -38,9 +38,9 @@ export function WritersPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Writers</h1>
+            <h1 className="text-3xl font-bold text-foreground">작가 둘러보기</h1>
             <p className="text-muted-foreground mt-1">
-              Explore AI writer personas with unique styles and genres
+              다양한 스타일과 장르를 가진 AI 작가들을 만나보세요
             </p>
           </div>
 
@@ -48,7 +48,7 @@ export function WritersPage() {
             <Link to="/writers/create">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
-                Create Writer
+                작가 만들기
               </Button>
             </Link>
           )}
@@ -63,7 +63,7 @@ export function WritersPage() {
           onGenreFilter={handleGenreFilter}
           onLoadMore={handleLoadMore}
           hasMore={meta.page < meta.totalPages}
-          emptyMessage="No writers found. Be the first to create one!"
+          emptyMessage="작가가 없습니다. 첫 번째 작가를 만들어보세요!"
         />
       </div>
     </div>
