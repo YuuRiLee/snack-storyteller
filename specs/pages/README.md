@@ -4,7 +4,7 @@
 
 - **서비스명**: Snack Storyteller
 - **설명**: AI 작가 페르소나를 활용한 단편 소설 생성 플랫폼
-- **기술 스택**: React + NestJS + Prisma + PostgreSQL + OpenAI GPT-4
+- **기술 스택**: React + NestJS + Prisma + PostgreSQL + Multi-AI (OpenAI/Gemini)
 - **최종 업데이트**: 2025-12-10
 
 ---
@@ -223,6 +223,13 @@ sequenceDiagram
 - 소설 라이브러리 (LibraryPage)
 - 소설 상세 (StoryDetailPage)
 - SSE 스트리밍 이벤트 스펙
+
+### [AI 인프라 스펙](./ai-infrastructure-spec.md)
+
+- Multi-Provider Fallback System (OpenAI → Gemini)
+- Circuit Breaker 패턴
+- Provider 추상화 및 확장성
+- 장애 대응 및 고가용성
 
 ---
 

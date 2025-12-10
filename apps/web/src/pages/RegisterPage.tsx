@@ -45,8 +45,8 @@ export function RegisterPage() {
   const displayError = validationError || error;
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/10 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md border-border/50 shadow-xl backdrop-blur-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">회원가입</CardTitle>
           <p className="text-muted-foreground text-sm mt-1">나만의 AI 작가를 만들어보세요</p>
