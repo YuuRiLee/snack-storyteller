@@ -26,9 +26,13 @@ export class OpenAIProvider implements AIProvider {
   ) {
     const apiKey = this.configService.get<string>('OPENAI_API_KEY');
 
+    const timeoutMs = Number(
+      this.configService.get<string>('OPENAI_TIMEOUT_MS', '60000'),
+    );
+
     this.client = new OpenAI({
       apiKey,
-      timeout: this.configService.get<number>('OPENAI_TIMEOUT_MS', 60000),
+      timeout: timeoutMs,
     });
 
     this.config = {
@@ -36,7 +40,7 @@ export class OpenAIProvider implements AIProvider {
       priority: 1, // Primary provider
       enabled: !!apiKey,
       supportsStreaming: true,
-      timeoutMs: this.configService.get<number>('OPENAI_TIMEOUT_MS', 60000),
+      timeoutMs,
       model: this.configService.get<string>('OPENAI_MODEL', 'gpt-4o-mini'),
     };
 

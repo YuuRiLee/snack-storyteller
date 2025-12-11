@@ -183,11 +183,8 @@ export class AIService implements OnModuleInit {
           willFallback: !!nextProvider,
         });
 
-        // Continue to next provider if error is retryable
-        if (!providerError.retryable) {
-          // Non-retryable error - throw immediately
-          throw this.convertToLegacyError(providerError);
-        }
+        // Always continue to next provider (even for non-retryable errors)
+        // Each provider is independent - OpenAI auth failure shouldn't prevent Gemini attempt
       }
     }
 
