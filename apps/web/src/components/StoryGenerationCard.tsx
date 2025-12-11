@@ -162,14 +162,30 @@ export function StoryGenerationCard({ writers }: StoryGenerationCardProps) {
 
           {/* Status Messages */}
           {retryAttempt !== null && (
-            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
-              <p className="text-yellow-500 text-sm">🔄 재시도 중... ({retryAttempt}/3)</p>
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 space-y-2">
+              <p className="text-yellow-500 text-sm font-medium">
+                🔄 재시도 중... ({retryAttempt}/3)
+              </p>
+              <p className="text-yellow-500/80 text-xs">
+                생성된 콘텐츠가 안전 검사를 통과하지 못했습니다. 다시 생성을 시도합니다.
+              </p>
             </div>
           )}
 
           {hasError && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
-              <p className="text-destructive text-sm">❌ {errorMessage}</p>
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 space-y-3">
+              <p className="text-destructive text-sm font-medium">❌ 생성 실패</p>
+              <p className="text-destructive/90 text-sm">{errorMessage}</p>
+              {errorMessage?.includes('안전 검사') && (
+                <div className="bg-background/50 rounded p-3 space-y-2">
+                  <p className="text-muted-foreground text-xs font-medium">💡 해결 방법:</p>
+                  <ul className="text-muted-foreground text-xs space-y-1 list-disc list-inside">
+                    <li>폭력적이거나 어두운 태그 조합 대신 밝은 분위기의 태그를 선택해 보세요</li>
+                    <li>예시: "로맨스 + 경쾌한 + 해피엔딩" 조합을 추천합니다</li>
+                    <li>느와르, 어두운, 스릴러 태그는 안전 검사에 걸릴 확률이 높습니다</li>
+                  </ul>
+                </div>
+              )}
             </div>
           )}
         </div>

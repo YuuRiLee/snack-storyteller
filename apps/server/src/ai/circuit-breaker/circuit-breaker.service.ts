@@ -33,21 +33,17 @@ export class CircuitBreakerService {
 
   constructor(configService: ConfigService) {
     this.config = {
-      failureThreshold: configService.get<number>(
-        'AI_CIRCUIT_FAILURE_THRESHOLD',
-        5,
+      failureThreshold: Number(
+        configService.get<string>('AI_CIRCUIT_FAILURE_THRESHOLD', '5'),
       ),
-      resetTimeoutMs: configService.get<number>(
-        'AI_CIRCUIT_RESET_TIMEOUT_MS',
-        30000,
+      resetTimeoutMs: Number(
+        configService.get<string>('AI_CIRCUIT_RESET_TIMEOUT_MS', '30000'),
       ),
-      halfOpenRequests: configService.get<number>(
-        'AI_CIRCUIT_HALF_OPEN_REQUESTS',
-        1,
+      halfOpenRequests: Number(
+        configService.get<string>('AI_CIRCUIT_HALF_OPEN_REQUESTS', '1'),
       ),
-      monitoringWindowMs: configService.get<number>(
-        'AI_CIRCUIT_MONITORING_WINDOW_MS',
-        60000,
+      monitoringWindowMs: Number(
+        configService.get<string>('AI_CIRCUIT_MONITORING_WINDOW_MS', '60000'),
       ),
     };
 
