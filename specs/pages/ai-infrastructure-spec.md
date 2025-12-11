@@ -98,7 +98,7 @@ stateDiagram-v2
 | 번호 | Domain   | Provider | Model            | 우선순위 | Timeout | Spec.                                                                             | 참고사항            |
 | ---- | -------- | -------- | ---------------- | -------- | ------- | --------------------------------------------------------------------------------- | ------------------- |
 | 1    | Primary  | OpenAI   | gpt-4o-mini      | 1        | 60s     | • API 키 존재 시 자동 활성화<br>• 스트리밍 지원<br>• Max Tokens: 4000             | 기본 Provider       |
-| 2    | Fallback | Gemini   | gemini-1.5-flash | 2        | 45s     | • API 키 + GEMINI_ENABLED=true 시 활성화<br>• 스트리밍 지원<br>• Max Tokens: 4000 | 무료 티어 활용 가능 |
+| 2    | Fallback | Gemini   | gemini-2.0-flash | 2        | 45s     | • API 키 + GEMINI_ENABLED=true 시 활성화<br>• 스트리밍 지원<br>• Max Tokens: 4000 | 무료 티어 활용 가능 |
 
 ### Provider Interface
 
@@ -170,7 +170,7 @@ stateDiagram-v2
 | 3    | OpenAI          | OPENAI_TIMEOUT_MS               | 아니오 | 60000            | 요청 타임아웃 (ms)           |
 | 4    | Gemini          | GEMINI_API_KEY                  | 아니오 | -                | Gemini API 키                |
 | 5    | Gemini          | GEMINI_ENABLED                  | 아니오 | false            | Gemini Provider 활성화 여부  |
-| 6    | Gemini          | GEMINI_MODEL                    | 아니오 | gemini-1.5-flash | 사용할 모델명                |
+| 6    | Gemini          | GEMINI_MODEL                    | 아니오 | gemini-2.0-flash | 사용할 모델명                |
 | 7    | Gemini          | GEMINI_TIMEOUT_MS               | 아니오 | 45000            | 요청 타임아웃 (ms)           |
 | 8    | Circuit Breaker | AI_CIRCUIT_FAILURE_THRESHOLD    | 아니오 | 5                | OPEN 전환까지 연속 실패 수   |
 | 9    | Circuit Breaker | AI_CIRCUIT_RESET_TIMEOUT_MS     | 아니오 | 30000            | HALF_OPEN 전환까지 대기 시간 |

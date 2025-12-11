@@ -28,7 +28,7 @@ interface GeminiContentResponse {
 /**
  * Gemini Provider
  *
- * Fallback AI provider using Google Gemini 1.5 Flash.
+ * Fallback AI provider using Google Gemini 2.0 Flash.
  * Used when OpenAI is unavailable or rate-limited.
  *
  * Features:
@@ -58,7 +58,7 @@ export class GeminiProvider implements AIProvider {
       timeoutMs: Number(
         this.configService.get<string>('GEMINI_TIMEOUT_MS', '45000'),
       ),
-      model: this.configService.get<string>('GEMINI_MODEL', 'gemini-1.5-flash'),
+      model: this.configService.get<string>('GEMINI_MODEL', 'gemini-2.0-flash'),
     };
 
     this.logger.log('GeminiProvider initialized', {
