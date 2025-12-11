@@ -110,14 +110,14 @@ export function useStoryGeneration(): UseStoryGenerationState {
       // Validation
       if (!writerId || tags.length === 0) {
         setHasError(true);
-        setErrorMessage('Writer ID and tags are required');
+        setErrorMessage('작가와 태그를 선택해 주세요');
         return;
       }
 
       const token = localStorage.getItem('access_token');
       if (!token) {
         setHasError(true);
-        setErrorMessage('Please login to generate a story');
+        setErrorMessage('소설을 생성하려면 로그인이 필요합니다');
         return;
       }
 
@@ -146,12 +146,12 @@ export function useStoryGeneration(): UseStoryGenerationState {
 
         if (!response.ok) {
           const errorText = await response.text();
-          throw new Error(errorText || `HTTP ${response.status}`);
+          throw new Error(errorText || `서버 오류 (${response.status})`);
         }
 
         const reader = response.body?.getReader();
         if (!reader) {
-          throw new Error('Response body is not readable');
+          throw new Error('서버 응답을 읽을 수 없습니다');
         }
 
         const decoder = new TextDecoder();
