@@ -141,7 +141,9 @@ export class StoryService {
     }
 
     if (!content) {
-      throw new Error('Story generation failed after 3 attempts');
+      throw new Error(
+        '콘텐츠 안전 검사를 통과하지 못해 소설 생성에 실패했습니다. 다른 태그 조합을 선택해 주세요.',
+      );
     }
 
     // Generate title
@@ -539,7 +541,9 @@ export class StoryService {
           }
 
           if (!content) {
-            throw new Error('Story generation failed after 3 attempts');
+            throw new Error(
+              '콘텐츠 안전 검사를 통과하지 못해 소설 생성에 실패했습니다. 다른 태그 조합을 선택해 주세요.',
+            );
           }
 
           // Generate title
